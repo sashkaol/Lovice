@@ -278,6 +278,8 @@
 .profile-photo {
     max-width: 200px;
     padding: 15px 0 0 15px;
+    border-radius: 30px;
+    background-color: #E4B2B4;
 }
 
 .img {
@@ -303,7 +305,7 @@
 .admin-tools, .user-tools {
     display: flex;
     margin-top: 30px;
-    gap: 10px;
+    gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
 }
