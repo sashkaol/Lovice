@@ -1,19 +1,125 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <title>Lovice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <div class="navbar">
+      <div class="navbar__wrapp">
+        <div class="left nav">
+          <img class="icons" src="img/like--v2.png" alt="">
+          <div class="search">
+            <input class="search__text" placeholder="Поиск..." />
+            <div class="search__img">
+              <img class="icons mini" src="img/search-for-love.png" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="right nav">
+          <img id="to-profile-page" class="icons" src="img/gender-neutral-user--v3.png" alt="">
+          <img class="icons" src="img/menu.png" alt="">
+        </div>
+      </div>
+    </div>
+  </header>
+  <div id="navigate-list" class="navigate-list">
+    <button id="to-reg" class="but">Регистрация</button>
+    <button id="to-sign-in" class="but">Вход</button>
+  </div>
+  <div id="reg-page" class="reg page close">
+    <div class="lovice-forms">
+      <div class="labels">Полное имя</div>
+      <input class="inputs" type="text" name="" id="name" placeholder="Александр Александров" required/>
+      <div class="labels gender">
+        <div class="labels"><input id="gen" class="inputs radio" type="radio" value="female" name="gender" checked />Я женщина</div>
+        <div class="labels"><input id="gen" class="inputs radio" type="radio" value="male" name="gender">Я мужчина</div>
+      </div>
+      <div class="labels">Логин</div>
+      <input class="inputs" type="text" name="" id="login" placeholder="Sasha" />
+      <div class="labels">Электронная почта</div>
+      <input class="inputs" type="email" name="" id="email" placeholder="mail@mail.com" />
+      <div class="labels">Номер телефона</div>
+      <input class="inputs" type="tel" name="" id="phone" placeholder="89612704567" />
+      <div class="labels">Дата рождения</div>
+      <input class="inputs" type="date" name="" id="birthday" placeholder="DD.MM.YYYY" />
+      <div class="labels">Пара слов о себе</div>
+      <textarea class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" ></textarea>
+      <div class="labels">Пароль</div>
+      <input class="inputs" type="password" name="" id="password" placeholder="Ваш пароль" />
+      <div class="labels">Повторите пароль</div>
+      <input class="inputs" type="password" name="" id="password_repeat" placeholder="Ваш пароль" />
+      <div class="labels">Если вы админ, введите код админа:</div>
+      <input class="inputs" type="text" placeholder="Код" id="code" />
+      <button id="registrate" class="act-but" >Зарегистрироваться</button>
+    </div>
+    <button id="to-main-r" class="but to-main">На главную</button>
+  </div>
+  <div id="sign-in-page" class="sign-in page close">
+    <div class="lovice-forms">
+      <div class="labels">Логин</div>
+      <input id="ent-login" class="inputs" type="text" placeholder="Sasha"/>
+      <div class="labels">Пароль</div>
+      <input id="ent-pass" class="inputs" type="password" placeholder="Ваш пароль"/>
+      <div id="error-enter" class="error-enter error-close">
+        Неверное имя пользователя или пароль!
+      </div>
+      <button id="enter" class="act-but">Войти</button>
+    </div>
+    <button id="to-main-e" class="but to-main">На главную</button>
+  </div>
+  <div id="service-page" class="service page close">
+    <div id="service-list" class="any-list">
+
+    </div>
+    <button id="to-main-s" class="but to-main">Назад</button>
+  </div>
+  <div id="clubs-page" class="clubs page close">
+    <div id="clubs-list" class="any-list">
+
+    </div>
+    <button id="to-main-c" class="but to-main">Назад</button>
+  </div>
+  <div id="catalog-page" class="catalog page close">
+    
+  </div>
+  <div id="profile-page" class="profile page close">
+    <div id="hello-page" class="hello-user close">
+      Вы успешно вошли в систему!
+    </div>
+    <div id="profile-info" class="">
+      <div id="profile-photo" class="profile-photo">
+    
+      </div>
+      <div id="profile-select" class="profile-information">
+
+      </div>
+      <div id="admin-tools" class="admin-tools tools-close">
+        <button id="users-notice" class="but">Мониторинг пользователей</button>
+        <button id="change-services" class="but">Редактировать услуги</button>
+        <button id="change-address" class="but">Редактировать адреса</button>
+      </div>
+      <div id="user-tools" class="user-tools tools-close">
+        <button id="search-but" class="but search-button">Найти пару</button>
+        <button id="likes-but" class="but likes-button">Понравившиеся пользователи</button>
+        <button id="to-service" class="but">Услуги</button>
+        <button id="to-clubs" class="but">Адреса заведений</button>
+        <button id="delete-profile" class="but">Удалить аккаунт</button>
+      </div>
+    </div>
+  </div>
+  <div id="overlay" class="overlay">
+
+  </div>
+  <!--<script src="./preload.js"></script>-->
+  <script src="./renderer.js"></script>
+</body>
+
 </html>
