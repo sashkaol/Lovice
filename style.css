@@ -405,7 +405,7 @@
 }
 
 .dis:hover {
-    box-shadow: 0 3px 20px 0 rgba(255, 113, 113, 1), 0 3px 7px 2px #fff, 0 9px 5px 0 rgba(255, 113, 113, 1);
+    box-shadow: 0 3px 20px 0 rgba(255, 113, 113, 1), 0 3px 7px 2px rgba(255, 113, 113, 1), 0 9px 5px 0 rgba(255, 113, 113, 1);
 }
 
 .like {
@@ -414,7 +414,7 @@
 }
 
 .like:hover {
-    box-shadow: 0 3px 20px 0 rgb(208 255 161), 0 3px 7px 2px #fff, 0 9px 5px 0 rgb(208 255 161)
+    box-shadow: 0 3px 20px 0 rgb(208 255 161), 0 3px 7px 2px rgb(208 255 161), 0 9px 5px 0 rgb(208 255 161);
 }
 
 .user-but:hover {

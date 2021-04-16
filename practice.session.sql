@@ -1,1 +1,1 @@
-SELECT * FROM Lovice.Users;
+SELECT * FROM Lovice.Services;

@@ -89,10 +89,10 @@ document.getElementById('registrate').addEventListener('click', () => {
 
 // вход в систему
 
-var this_login;
-var this_password;
-var this_salt;
-var user_password;
+var this_login = '';
+var this_password = '';
+var this_salt = '';
+var user_password = '';
 
 // это нажатие на кнопку входа
 
@@ -231,6 +231,64 @@ connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Services;`, (err, rez) 
       });
   }
 });
+
+//
+
+document.getElementById('search-but-main').addEventListener('click', () => {
+  if (this_login === '') {
+    console.log('Авторизуйтесь в системе');
+  } else {
+    let search = document.getElementById('search-input').value;
+    connection.query(`SELECT * FROM Lovice.Users WHERE Users.Full_Name LIKE "%${search}%" OR Users.Log_in LIKE "%${search}%";`, (err, rez) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (rez == '') {
+        connection.query(`SELECT * FROM Lovice.Services WHERE Services.ServiceName LIKE "%${search}%";`, (err, rez) => {
+          if (err) {
+            console.log(err);
+          } else {
+            if (rez == '') {
+              connection.query(`SELECT * FROM Lovice.Clubs WHERE Clubs.Club_name LIKE "%${search}%";`, (err, rez) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  if (rez == '') {
+                    console.log('по вашему запросу ничего не найдено');
+                  } else {
+                    console.log(rez);
+                  }
+                }
+              })
+            } else {
+              console.log(rez);
+            }
+          }
+        })
+      } else {
+        console.log(rez);
+      }
+    }
+  })
+  }
+})
+
+document.getElementById('delete-profile-user').addEventListener('click', () => {
+  console.log('вы хотите удалить профиль?');
+  connection.query(`INSERT INTO Lovice.Archive SELECT * FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+    if (err) {
+      console.log(err);
+    } else {
+      connection.query(`DELETE FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('ваш аккаунт успешно удален');
+        }
+      })
+    }
+  })
+})
 
 // формирование страницы клубов
 
