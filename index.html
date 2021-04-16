@@ -15,24 +15,42 @@
     <div class="navbar">
       <div class="navbar__wrapp">
         <div class="left nav">
-          <img class="icons" src="img/like--v2.png" alt="">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icons icon icon-tabler icon-tabler-heart" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f7eeed" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M19.5 13.572l-7.5 7.428l-7.5 -7.428m0 0a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+          </svg>
           <div class="search">
             <input class="search__text" placeholder="Поиск..." />
             <div class="search__img">
-              <img class="icons mini" src="img/search-for-love.png" alt="">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icons icon icon-tabler icon-tabler-search" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#F7EEED" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <circle cx="10" cy="10" r="7" />
+                <line x1="21" y1="21" x2="15" y2="15" />
+              </svg>
             </div>
           </div>
         </div>
         <div class="right nav">
-          <img id="to-profile-page" class="icons" src="img/gender-neutral-user--v3.png" alt="">
-          <img class="icons" src="img/menu.png" alt="">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icons icon icon-tabler icon-tabler-user" width="44" height="44" viewBox="0 0 24 24" stroke-width="2" stroke=" #F7EEED" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <circle cx="12" cy="7" r="4" />
+            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icons icon icon-tabler icon-tabler-menu-2" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f7eeed" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
         </div>
       </div>
     </div>
   </header>
   <div id="navigate-list" class="navigate-list">
-    <button id="to-reg" class="but">Регистрация</button>
-    <button id="to-sign-in" class="but">Вход</button>
+    <div class="navigate-list__wrapp">
+      <button id="to-reg" class="but">Регистрация</button>
+      <button id="to-sign-in" class="but">Вход</button>
+    </div>
   </div>
   <div id="reg-page" class="reg page close">
     <div class="lovice-forms">
@@ -87,7 +105,7 @@
     </div>
     <button id="to-main-c" class="but to-main">Назад</button>
   </div>
-  <div id="catalog-page" class="catalog page close">
+  <div id="catalog-page" class="catalog-page page close">
     
   </div>
   <div id="profile-page" class="profile page close">

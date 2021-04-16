@@ -255,8 +255,9 @@ connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Clubs`, (err, rez) => {
   }
 })
 
-document.getElementById('to-profile-page').addEventListener('click', () => {
-  
+document.getElementById('change-services').addEventListener('click', () => {
+  document.getElementById('profile-page').classList.add('close');
+  document.getElementById('service-page').classList.remove('close');
 })
 
 // тут раздел переключения страниц, т.к. электрон не позволяет делать многостраничные приложения, пришлось ставить класс close
