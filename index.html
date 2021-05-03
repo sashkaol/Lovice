@@ -124,6 +124,7 @@
         <button id="change-services" class="but">Редактировать услуги</button>
         <button id="change-address" class="but">Редактировать адреса</button>
         <button id="delete-profile-admin" class="but">Удалить аккаунт</button>
+        <button id="exit-profile" class="but exit-but">Выйти</button>
       </div>
       <div id="user-tools" class="user-tools tools-close">
         <button id="search-but" class="but search-button">Найти пару</button>
@@ -131,18 +132,21 @@
         <button id="to-service" class="but">Услуги</button>
         <button id="to-clubs" class="but">Адреса заведений</button>
         <button id="delete-profile-user" class="but">Удалить аккаунт</button>
+        <button id="exit-profile" class="but exit-but">Выйти</button>
       </div>
     </div>
   </div>
   <div id="change-services-page" class="change-services page close">
     <div class="lovice-forms">
-      <div id="service-name" class="labels"></div>
-      <input class="inputs" type="text" />
-      <div id="service-cost" class="labels"></div>
-      <textarea class="inputs" type="text"></textarea>
-      <div  id="service-description" class="labels"></div>
-      <input class="inputs" type="text" />
+      <div id="service-name" class="labels">Название услуги</div>
+      <input class="inputs" type="text" placeholder="Романтический ужин"/>
+      <div id="service-cost" class="labels">Цена</div>
+      <input class="inputs" type="text" placeholder="500"/>
+      <div id="service-description" class="labels">Описание</div>
+      <textarea class="inputs about" type="text" placeholder="Романтический ужин при свечах"></textarea>
+      <button id="add-service" class="but">Добавить</button>
     </div>
+    <button id="to-profile-from-chs" class="but">Назад</button>
   </div>
   <div id="overlay" class="overlay">
 

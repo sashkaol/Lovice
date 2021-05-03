@@ -252,6 +252,7 @@
 .card-but:hover {
     background-color:#E4B2B4 !important;
     color:#F7EEED !important; 
+    box-shadow: 0px 0px 0 #F7EEED, 0 4px 5px 1px #F7EEED, 0 2px 1px 0 #F7EEED !important;
 }
 
 .buy {
@@ -421,4 +422,32 @@
     /*box-shadow: 0 14px 28px rgba(140, 108, 110, 0.5), 0 10px 10px rgba(140, 108, 110, 0.5);*/
     transition: ease-in-out 0.4s;
     cursor: pointer;
+}
+
+.profile-information {
+    font-family: "font";
+    font-size: 24px;
+    color: #E4B2B4;
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+    min-width: none;
+}
+
+.main-info {
+    font-weight: 600;
+}
+
+.exit-but {
+    background-color:rgba(255, 113, 113, 1) !important;
+}
+
+.exit-but:hover {
+    background-color: #F7EEED !important;
+    color: rgba(255, 113, 113, 1);
+    box-shadow: 0 13px 40px 0 rgba(255, 113, 113, 1), 0 13px 40px 5px #fff, 0 3px 5px 0 rgba(255, 113, 113, 1) !important;
 }
