@@ -10,8 +10,6 @@ window.addEventListener('DOMContentLoaded', () => {
     replaceText(`${type}-version`, process.versions[type])
   }
 
-// подключение модуля для хэширования паролей
-
 const bcrypt = require('bcrypt');
 
 // подключение MySql
@@ -35,34 +33,19 @@ connection.connect( (err) => {
   }
 });
 
-/*function showError(text) {
-  let err;  
-  err.insertAdjacentHTML("afterbegin", `<div class="all-error">${text}</div>`);
-}*/
-
-// раздел переменных
-
-var this_login = '';
-var this_password = '';
-var this_salt = '';
-var user_password = '';
-var user_name = '';
-var user_age = '';
-var user_about = '';
-
 // регистрация пользователя в системе
 
 document.getElementById('registrate').addEventListener('click', () => {
+  // рабочий код, не трогать!
   let name = document.getElementById('name').value;
   let login = document.getElementById('login').value;
-  connection.query(`SELECT COUNT (*) FROM Lovice.Users WHERE Users.Log_in = '${login}';`, () => {
-      let email = document.getElementById('email').value;
-      let gender = document.getElementsByName('gender');
-      for (let i = 0; i < gender.length; i++) {
-      if (gender[i].checked) {
-        gender = gender[i].value;
-        break;
-      }
+  let email = document.getElementById('email').value;
+  let gender = document.getElementsByName('gender');
+  for (let i = 0; i < gender.length; i++) {
+    if (gender[i].checked) {
+      gender = gender[i].value;
+      break;
+    }
   }
   let phone = document.getElementById('phone').value;
   let birthday = document.getElementById('birthday').value;
@@ -88,7 +71,7 @@ document.getElementById('registrate').addEventListener('click', () => {
     query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${gender}', '${about}', '${level}');`;
     console.log('вы зарегались');
     console.log(query);
-    connection.query(query, (err) => {
+    connection.query(query, (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -102,149 +85,86 @@ document.getElementById('registrate').addEventListener('click', () => {
       }  
     }) 
   }
-  })
-});
+})
 
 // вход в систему
 
-function openUserProfile(rez) {
-  document.getElementById('hello-page').classList.add('close');
-  document.getElementById('profile-select').innerHTML = `<div><span class="main-info">Мое имя:</span> ${rez[0]['Full_Name']}</div><br/>
-            <div><span class="main-info">Мой день рождения:</span> ${rez[0]['Birthday']}</div><br/>
-            <div><span class="main-info">Мой номер телефона:</span> ${rez[0]['Phone_Number']}</div><br/>
-            <div><span class="main-info">Обо мне:</span> ${rez[0]['About_me']}</div>`;
-let photo = document.createElement('div');
-if (rez[0]['Gender'] == 'female') {
-  console.log(rez[0]['Gender']);
-  var photo_title = 'img/woman-1.svg';
-} else {
-  console.log(rez[0]['Gender']);
-  photo_title = 'img/man-1.svg';
-}
-photo.innerHTML = `<div><img class="img" src="${photo_title}" alt="profile-photo" /</div>`;
-document.getElementById('profile-photo').appendChild(photo);
-if (rez[0]['Level'] == 'admin') {
-  document.getElementById('admin-tools').classList.remove('tools-close');
-} else {
-  document.getElementById('user-tools').classList.remove('tools-close');
-}
-} 
+var this_login = '';
+var this_password = '';
+var this_salt = '';
+var user_password = '';
 
-  
-document.getElementById('to-sign-in').addEventListener('click', enter);
+// это нажатие на кнопку входа
 
-function enter() {
-  connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.User_online = 'online';`, (err, rez) => {
+document.getElementById('enter').addEventListener('click', () => {
+  document.getElementById('error-enter').classList.add('error-clode');
+  this_login = document.getElementById('ent-login').value;
+  this_password = document.getElementById('ent-pass').value;
+  connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
     if (err) {
       console.log(err);
-    } else {
-      if (rez[0]['Kolvo'] == 1) {
-        connection.query(`SELECT Users.Log_in FROM Lovice.Users WHERE Users.User_online = 'online';`, (err, rez) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(rez);
-            this_login = rez[0]['Log_in'];
-            document.getElementById('navigate-list').classList.add('close');
-            document.getElementById('profile-page').classList.remove('close');
-            connection.query(`SELECT * FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-              if (err) {
-                console.log(err);
+    } else if (rez[0]['Kolvo'] == 1) {
+      connection.query(`SELECT Users.Salt FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+        if (err) {
+          console.log(err);
+        } else {         
+          this_salt = rez[0]['Salt'];
+          console.log(this_salt);
+          this_password = bcrypt.hashSync(this_password, this_salt);
+          connection.query(`SELECT Users.Pass_word FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+            if (err) {
+              console.log(err);
+            } else {
+              user_password = rez[0]['Pass_word'];
+              console.log(user_password);
+              if (this_password != user_password) {
+                console.log('Неверное имя пользователя или пароль');
+                document.getElementById('error-enter').classList.remove('error-close');
               } else {
                 document.getElementById('profile-page').classList.remove('close');
-                      document.getElementById('hello-page').classList.remove('close');
-                      document.getElementById('sign-in-page').classList.add('close');                  
-                setTimeout(openUserProfile, 2000, rez);
-              }
-            })
-          }
-        })
-      } else {
-        document.getElementById('to-sign-in').addEventListener('click', () => {
-          document.getElementById('sign-in-page').classList.remove('close');
-          document.getElementById('navigate-list').classList.add('close');
-        })
-        document.getElementById('enter').addEventListener('click', () => {
-          this_login = document.getElementById('ent-login').value;
-        this_password = document.getElementById('ent-pass').value;
-        connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-          if (err) {
-            console.log(err);
-          } else if (rez[0]['Kolvo'] == 1) {
-            connection.query(`SELECT Users.Salt FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-              if (err) {
-                console.log(err);
-              } else {
-                this_salt = rez[0]['Salt'];
-                console.log(this_salt);
-                this_password = bcrypt.hashSync(this_password, this_salt);
-                connection.query(`SELECT Users.Pass_word FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    user_password = rez[0]['Pass_word'];
-                    console.log(user_password);
-                    if (this_password != user_password) {
-                      console.log('Неверное имя пользователя или пароль');
-                      document.getElementById('error-enter').classList.remove('error-close');
+                document.getElementById('hello-page').classList.remove('close');
+                document.getElementById('sign-in-page').classList.add('close');
+                function open() {
+                  document.getElementById('hello-page').classList.add('close');
+                  connection.query(`SELECT * FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+                    if (err) {
+                      console.log(err);
                     } else {
-                      connection.query(`UPDATE Lovice.Users SET Users.User_online = 'online' WHERE Users.Log_in = '${this_login}';`, (err) => {
-                        if (err) {
-                          console.log(err);
-                        }
-                      })
-                      document.getElementById('profile-page').classList.remove('close');
-                      document.getElementById('hello-page').classList.remove('close');
-                      document.getElementById('sign-in-page').classList.add('close');
-                      setTimeout(openUserProfile, 2000, rez);
+                      document.getElementById('profile-select').innerHTML = rez[0]['Full_Name'];
+                      let photo = document.createElement('div');
+                      if (rez[0]['Gender'] == 'female') {
+                        console.log(rez[0]['Gender']);
+                        var photo_title = 'img/woman-1.svg';
+                      } else {
+                        console.log(rez[0]['Gender']);
+                        photo_title = 'img/man-1.svg';
+                      }
+                      photo.innerHTML = `<div><img class="img" src="${photo_title}" alt="profile-photo" /</div>`;
+                      document.getElementById('profile-photo').appendChild(photo);
+                      if (rez[0]['Level'] == 'admin') {
+                        document.getElementById('admin-tools').classList.remove('tools-close');
+                      } else {
+                        document.getElementById('user-tools').classList.remove('tools-close');
+                      }
                     }
-                  }
-                })
+                  })
+                  
+                }
+                setTimeout(open, 2000);
               }
-            })
-          } else if (rez[0]['Kolvo'] == 0) {
-            document.getElementById('error-enter').classList.remove('error-close');
-          }
-        })
-        })
-        
-      }
+            }
+          })
+        }
+      })
+    } else if (rez[0]['Kolvo'] == 0) {
+      document.getElementById('error-enter').classList.remove('error-close');
     }
   })
-}
+})
 
-function exitFromProfile() {
-  document.getElementById('profile-page').classList.add('close');
-  document.getElementById('navigate-list').classList.remove('close');
-  connection.query(`UPDATE Lovice.Users SET Users.User_online = NULL WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(rez);
-    }
-  });
-  this_login = '';
-  this_password = '';
-  this_salt = '';
-  user_password = '';
-  user_name = '';
-  user_age = '';
-  user_about = '';
-}
+console.log(this_login);
 
-document.getElementById('exit-profile').addEventListener('click', exitFromProfile);
-
-function ageCalc(user_age) {
-  if (user_age >= 5 && user_age <= 20) {
-    return user_age + ' лет';
-  } else if ((user_age%10 === 0) || ((user_age%10 >= 5) && (user_age%10 <= 9))) {
-    return user_age + ' лет';
-  } else if (user_age%10 === 1) {
-    return user_age + ' год';
-  } else if ((user_age%10 >= 2) && (user_age%10 <= 4)) {
-    return user_age + ' года';
-  }
-}
+//
 
 document.getElementById("search-but").addEventListener('click', () => {
   document.getElementById("profile-page").classList.add("close");
@@ -259,11 +179,20 @@ document.getElementById("search-but").addEventListener('click', () => {
           console.log(err);
         } else {
           for (let i = 0; i < kolvo; i++) {
-            user_name = rez[i]['Full_Name'];
-            user_age = rez[i]['Age'];
-            user_about = rez[i]['About_me'];
+            let user_name = rez[i]['Full_Name'];
+            let user_age = rez[i]['Age'];
+            let user_about = rez[i]['About_me'];
+              if (user_age >= 5 && user_age <= 20) {
+                user_age = user_age + ' лет';
+              } else if ((user_age%10 === 0) || ((user_age%10 >= 5) && (user_age%10 <= 9))) {
+                user_age = user_age + ' лет';
+              } else if (user_age%10 === 1) {
+                user_age = user_age + ' год';
+              } else if ((user_age%10 >= 2) && (user_age%10 <= 4)) {
+                user_age = user_age + ' года';
+              }
             let catalog_card = document.createElement('div');
-            catalog_card.innerHTML = `<div id="user-${i}" class="catalog-card"><div class="user-info">${user_name}</div><div class="user-info">${ageCalc(user_age)}</div><div class="user-info big">${user_about}</div><div class="user-buts"><button class="user-but like"><img class="likes" src="img/facebook-like.png"></button><button class="user-but dis"><img class="likes" src="img/thumbs-down--v2.png"></button></div></div>`;
+            catalog_card.innerHTML = `<div id="user-${i}" class="catalog-card"><div class="user-info">${user_name}</div><div class="user-info">${user_age}</div><div class="user-info big">${user_about}</div><div class="user-buts"><button class="user-but like"><img class="likes" src="img/facebook-like.png"></button><button class="user-but dis"><img class="likes" src="img/thumbs-down--v2.png"></button></div></div>`;
             document.getElementById("catalog-page").appendChild(catalog_card);
           }
         }
@@ -386,7 +315,7 @@ connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Clubs`, (err, rez) => {
 
 document.getElementById('change-services').addEventListener('click', () => {
   document.getElementById('profile-page').classList.add('close');
-  document.getElementById('change-services-page').classList.remove('close');
+  document.getElementById('service-page').classList.remove('close');
 })
 
 // тут раздел переключения страниц, т.к. электрон не позволяет делать многостраничные приложения, пришлось ставить класс close
@@ -416,6 +345,11 @@ document.getElementById('to-main-s').addEventListener('click', () => {
 })
 
 // открытие страницы входа и закрытие
+
+document.getElementById('to-sign-in').addEventListener('click', () => {
+  document.getElementById('sign-in-page').classList.remove('close');
+  document.getElementById('navigate-list').classList.add('close');
+})
 
 document.getElementById('to-main-e').addEventListener('click', () => {
   document.getElementById('sign-in-page').classList.add('close');
