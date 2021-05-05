@@ -46,7 +46,7 @@
       </div>
     </div>
   </header>
-  <div id="navigate-list" class="navigate-list">
+  <div id="navigate-list" class="navigate-list close">
     <div class="navigate-list__wrapp">
       <button id="to-reg" class="but">Регистрация</button>
       <button id="to-sign-in" class="but">Вход</button>
@@ -61,19 +61,19 @@
         <div class="labels"><input id="gen" class="inputs radio" type="radio" value="male" name="gender">Я мужчина</div>
       </div>
       <div class="labels">Логин</div>
-      <input class="inputs" type="text" name="" id="login" placeholder="Sasha" />
+      <input class="inputs" type="text" name="" id="login" placeholder="Sasha" required/>
       <div class="labels">Электронная почта</div>
-      <input class="inputs" type="email" name="" id="email" placeholder="mail@mail.com" />
+      <input class="inputs" type="email" name="" id="email" placeholder="mail@mail.com" required/>
       <div class="labels">Номер телефона</div>
-      <input class="inputs" type="tel" name="" id="phone" placeholder="89612704567" />
+      <input class="inputs" type="tel" name="" id="phone" placeholder="89612704567" required/>
       <div class="labels">Дата рождения</div>
-      <input class="inputs" type="date" name="" id="birthday" placeholder="DD.MM.YYYY" />
+      <input class="inputs" type="date" name="" id="birthday" placeholder="DD.MM.YYYY" required/>
       <div class="labels">Пара слов о себе</div>
-      <textarea class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" ></textarea>
+      <textarea class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" required></textarea>
       <div class="labels">Пароль</div>
-      <input class="inputs" type="password" name="" id="password" placeholder="Ваш пароль" />
+      <input class="inputs" type="password" name="" id="password" placeholder="Ваш пароль" required/>
       <div class="labels">Повторите пароль</div>
-      <input class="inputs" type="password" name="" id="password_repeat" placeholder="Ваш пароль" />
+      <input class="inputs" type="password" name="" id="password_repeat" placeholder="Ваш пароль" required/>
       <div class="labels">Если вы админ, введите код админа:</div>
       <input class="inputs" type="password" placeholder="Код" id="code" />
       <button id="registrate" class="act-but" >Зарегистрироваться</button>
@@ -86,9 +86,7 @@
       <input id="ent-login" class="inputs" type="text" placeholder="Sasha"/>
       <div class="labels">Пароль</div>
       <input id="ent-pass" class="inputs" type="password" placeholder="Ваш пароль"/>
-      <div id="error-enter" class="error-enter error-close">
-        Неверное имя пользователя или пароль!
-      </div>
+      <div id="error-enter" class="for-error-message close"></div>
       <button id="enter" class="act-but">Войти</button>
     </div>
     <button id="to-main-e" class="but to-main">На главную</button>
@@ -97,16 +95,27 @@
     <div id="service-list" class="any-list">
 
     </div>
-    <button id="to-main-s" class="but to-main">Назад</button>
+    <button id="to-main-s" class="but to-main">В профиль</button>
   </div>
   <div id="clubs-page" class="clubs page close">
     <div id="clubs-list" class="any-list">
 
     </div>
-    <button id="to-main-c" class="but to-main">Назад</button>
+    <button id="to-main-c" class="but to-main">В профиль</button>
   </div>
   <div id="catalog-page" class="catalog-page page close">
+    <div id="catalog-page-cards" class="catalog-page-cards"></div>
+    <button id="to-pofile-from-catalog" class="but">В профиль</button>
     
+  </div>
+  <div id="all-users" class="all-users-catalog page close">
+    <div id="admin-pages" class="admins-pages">
+      <span class="labels">Администраторы</span>
+    </div>
+    <div id="user-pages" class="users-pages">
+      <span class="labels">Пользователи</span>
+    </div>
+    <button id="to-profile-from-alls" class="but">В профиль</button>
   </div>
   <div id="profile-page" class="profile page close">
     <div id="hello-page" class="hello-user close">
@@ -122,31 +131,48 @@
       <div id="admin-tools" class="admin-tools tools-close">
         <button id="users-notice" class="but">Мониторинг пользователей</button>
         <button id="change-services" class="but">Редактировать услуги</button>
-        <button id="change-address" class="but">Редактировать адреса</button>
-        <button id="delete-profile-admin" class="but">Удалить аккаунт</button>
-        <button id="exit-profile-admin" class="but exit-but">Выйти</button>
+        <button id="change-clubs" class="but">Редактировать адреса</button>
+        <button id="delete-profile-admin" class="but red">Удалить аккаунт</button>
+        <button id="exit-profile-admin" class="but red">Выйти</button>
       </div>
       <div id="user-tools" class="user-tools tools-close">
         <button id="search-but" class="but search-button">Найти пару</button>
         <button id="likes-but" class="but likes-button">Понравившиеся пользователи</button>
         <button id="to-service" class="but">Услуги</button>
         <button id="to-clubs" class="but">Адреса заведений</button>
-        <button id="delete-profile-user" class="but">Удалить аккаунт</button>
-        <button id="exit-profile-user" class="but exit-but">Выйти</button>
+        <button id="delete-profile-user" class="but red">Удалить аккаунт</button>
+        <button id="exit-profile-user" class="but red">Выйти</button>
       </div>
     </div>
   </div>
   <div id="change-services-page" class="change-services page close">
     <div class="lovice-forms">
       <div id="service-name" class="labels">Название услуги</div>
-      <input class="inputs" type="text" placeholder="Романтический ужин"/>
+      <input id="service-name-input" class="inputs" type="text" placeholder="Романтический ужин"/>
       <div id="service-cost" class="labels">Цена</div>
-      <input class="inputs" type="text" placeholder="500"/>
+      <input id="service-cost-input" class="inputs" type="text" placeholder="500"/>
       <div id="service-description" class="labels">Описание</div>
-      <textarea class="inputs about" type="text" placeholder="Романтический ужин при свечах"></textarea>
+      <textarea id="service-desc-input" class="inputs about" type="text" placeholder="Романтический ужин при свечах"></textarea>
       <button id="add-service" class="but">Добавить</button>
+      <div id="success-add-serv" class="for-message close"></div>
+      <button id="view-services" class="but">Просмотреть все услуги</button>
     </div>
-    <button id="to-profile-from-chs" class="but">Назад</button>
+    <button id="to-profile-from-chs" class="but bottom">Назад</button>
+  </div>
+
+  <div id="change-clubs-page" class="change-clubs page close">
+    <div class="lovice-forms">
+      <div id="club-name" class="labels">Название заведения</div>
+      <input id="club-name-input" class="inputs" type="text" placeholder="Выйду ночью в поле"/>
+      <div id="club-address" class="labels">Адрес</div>
+      <input id="club-address-input" class="inputs" type="text" placeholder="ул. Конёвая, д1"/>
+      <div id="club-description" class="labels">Описание</div>
+      <textarea id="club-desc-input" class="inputs about" type="text" placeholder="Шикарное место для свиданий"></textarea>
+      <button id="add-club" class="but">Добавить</button>
+      <div id="success-add-club" class="for-message close"></div>
+      <button id="view-clubs" class="but">Просмотреть все заведения</button>
+    </div>
+    <button id="to-profile-from-chc" class="but bottom">Назад</button>
   </div>
   <div id="overlay" class="overlay">
 
