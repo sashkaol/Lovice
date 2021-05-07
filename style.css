@@ -240,7 +240,7 @@
     transition: max-height ease-out 1s;
 }
 
-::-webkit-scrollbar {
+.visible::-webkit-scrollbar {
     display: none;
 }
 
@@ -366,6 +366,13 @@
     justify-content: center;
 }
 
+.admins-pages, .users-pages {
+    justify-content: center;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 .catalog-page-cards {
     gap: 20px;
     flex-direction: row;
@@ -405,6 +412,11 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    overflow-y: scroll;
+}
+
+.user-info::-webkit-scrollbar {
+    display: none;
 }
 
 .big {
@@ -415,13 +427,36 @@
 .user-but {
     width: 78px;
     height: 46px;
-    border-radius: 30px;
+    /*border-radius: 30px;*/
     outline: none;
     border: none;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: ease-in-out 0.4s;
+    /*color:rgb(97, 73, 74);*/
+    font-family: "font";
+    font-size: 18px;
+    border-radius: 30px;
+}
+
+.adm-but {
+    width: 122.5px;
+}
+
+.adm {
+    width: 290px;
+}
+
+.adm-l {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-size: 24px !important;
+    font-weight: 500;
+}
+
+.for-adm {
+    width: 250px !important;
 }
 
 .user-buts {
@@ -435,6 +470,7 @@
 
 .dis {
     background-color:rgba(255, 113, 113, 1);
+    color: #F7EEED;
 }
 
 .dis:hover {
@@ -444,6 +480,7 @@
 .like {
     background-color: rgba(208, 255, 161, 1)
     ;
+    color: rgba(140, 108, 110, 1);
 }
 
 .like:hover {
@@ -504,8 +541,6 @@
     justify-content: center;
 }
 
-.users-pages {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+#to-profile-from-alls {
+    margin-top: 40px;
 }

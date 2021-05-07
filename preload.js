@@ -41,9 +41,10 @@ document.getElementById('registrate').addEventListener('click', () => {
   let login = document.getElementById('login').value;
   let email = document.getElementById('email').value;
   let gender = document.getElementsByName('gender');
+  let pol;
   for (let i = 0; i < gender.length; i++) {
     if (gender[i].checked) {
-      gender = gender[i].value;
+      pol = gender[i].value;
       break;
     }
   }
@@ -60,16 +61,11 @@ document.getElementById('registrate').addEventListener('click', () => {
   if (password != password_repeat) {
     console.log('пароли разные');
   } else {
-    let code = document.getElementById('code').value;
     let query ='';
-    let level = '';
-    if (code == 'admin') {
-      level = 'admin';
-    } else {
-      level = 'user';
-    }
-    query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${gender}', '${about}', '${level}', NULL);`;
+    query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${pol}', '${about}', 'user', NULL);`;
     console.log('вы зарегались');
+    clearInputs();
+    showMessage('success-reg', 'Вы успешно зарегистрировались!');
     console.log(query);
     connection.query(query, (err, result) => {
       if (err) {
@@ -93,7 +89,7 @@ var this_login = '';
 var this_password = '';
 var this_salt = '';
 var user_password = '';
-var inputs = document.querySelectorAll('input');
+var inputs = document.querySelectorAll('input:not([type=checkbox]):not([type=radio])');
 var textareas = document.querySelectorAll('textarea');
 
 function clearInputs() {
@@ -283,8 +279,8 @@ function ageCalc(user_age) {
     })
   }
 
-  function deleteCatalog() {
-    let arr = document.getElementById('catalog-page-cards');
+  function deleteCatalog(id) {
+    let arr = document.getElementById(id);
     while (arr.firstChild) {
       arr.removeChild(arr.lastChild);
     }
@@ -298,38 +294,91 @@ function ageCalc(user_age) {
 
 
 function openCatalogForAdmins() {
-  connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Log_in <> '${this_login}';`, (err, rez) => {
+  connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Log_in <> '${this_login}' AND Users.Level = 'admin';`, (err, rez) => {
     if (err) {
       console.log(err);
     } else {
       let kolvo = rez[0]['Kolvo'];
-    console.log(rez);
-    connection.query(`SELECT * FROM Lovice.Users WHERE Users.Log_in <> '${this_login}';`, (err, rez) => {
+      console.log(rez);
+      connection.query(`SELECT * FROM Lovice.Users WHERE Users.Log_in <> '${this_login}' AND Users.Level = 'admin';`, (err, rez) => {
       if (err) {
         console.log(err);
       } else {
         for (let i = 0; i < kolvo; i++) {
           let allCatalogCard = document.createElement('div');
           allCatalogCard.innerHTML = `
-          <div class="catalog-card">
-          <span class="labels">${rez[i]['Log_in']}</span>
-          <span class="labels">${rez[i]['Full_Name']}</span>
-          <span class="labels">${rez[i]['Email']}</span>
-          <span class="labels">${rez[i]['Phone_Number']}</span>
-          <span class="labels">${rez[i]['Birthday']}</span>
-          <span class="labels">${rez[i]['Gender']}</span>
-          <span class="labels">${rez[i]['About_me']}</span>
-          </div>`;
-          if (rez[i]['Level'] == 'admin') {
-            document.getElementById('admin-pages').appendChild(allCatalogCard);
-          } else {
-            document.getElementById('user-pages').appendChild(allCatalogCard);
-          }
+          <div id="admin-${i}" class="catalog-card adm">
+          <span class="user-info for-adm log-for-adm-${i}">${rez[i]['Log_in']}</span>
+          <span class="user-info for-adm">${rez[i]['Full_Name']}</span>
+          <span class="user-info for-adm">${rez[i]['Email']}</span>
+          <span class="user-info for-adm">${rez[i]['Phone_Number']}</span>
+          <span class="user-info big for-adm">${rez[i]['Birthday']}</span>
+          <span class="user-info for-adm">${rez[i]['Gender']}</span>
+          <span class="user-info big for-adm">${rez[i]['About_me']}</span>
+          <div class="user-buts">
+          <button id="make-user-${i}" class="user-but like adm-but">В пользователи</button>
+          <button id="go-to-archive-${i}" class="user-but dis adm-but">В архив</button>
+          </div>
+          </div>
+          `;
+          document.getElementById('admin-pages').appendChild(allCatalogCard);
         }
+        connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Level = 'user';`, (err, rez) => {
+          kolvo = rez[0].Kolvo;
+          connection.query("SELECT * FROM Lovice.Users WHERE Users.Level = 'user';", (err, rez) => {
+            for (let i = 0; i < kolvo; i++) {
+              let allCatalogCard = document.createElement('div');
+              allCatalogCard.innerHTML = `
+              <div id="user-${i}" class="catalog-card adm">
+              <span class="user-info for-adm log-for-adm-${i}">${rez[i]['Log_in']}</span>
+              <span class="user-info for-adm">${rez[i]['Full_Name']}</span>
+              <span class="user-info for-adm">${rez[i]['Email']}</span>
+              <span class="user-info for-adm">${rez[i]['Phone_Number']}</span>
+              <span class="user-info big for-adm">${rez[i]['Birthday']}</span>
+              <span class="user-info for-adm">${rez[i]['Gender']}</span>
+              <span class="user-info big for-adm">${rez[i]['About_me']}</span>
+              <div class="user-buts">
+              <button id="make-admin-${i}" class="user-but like adm-but">В админы</button>
+              <button id="go-to-archive-${i}" class="user-but dis adm-but">В архив</button>
+              </div>
+              </div>`
+              document.getElementById('user-pages').appendChild(allCatalogCard);
+            }
+          })
+          connection.query("SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Level = 'user';", (err, rez) => {
+            let kolvo = rez[0]['Kolvo'];
+            for (let i = 0; i < kolvo; i++) {
+              console.log(i);
+              document.getElementById(`make-admin-${i}`).addEventListener('click', () => {
+                let user = document.getElementsByClassName(`log-for-adm-${i}`)[0].textContent;
+                makeAdmin(user);
+              })
+            }
+          })
+        })
+        /*connection.query("SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Level = 'admin';", (err, rez) => {
+          let kolvo = rez[0]['Kolvo'];
+          let i = allKolvo - kolvo;
+          for (i; i < kolvo; i++) {
+            document.getElementById(`make-user-${i}`).addEventListener('click', () => {
+              let user = document.getElementsByClassName(`log-for-adm-${i}`)[0].textContent;
+              makeAdmin(user);
+            })
+          }
+        })
+        })*/
       }
     })
     }
   })
+}
+
+
+function makeAdmin(login) {
+  connection.query(`UPDATE Lovice.Users SET Users.Level = 'admin' WHERE Users.Log_in = '${login}';`);
+  deleteCatalog('admin-pages');
+  deleteCatalog('user-pages');
+  openCatalogForAdmins();
 }
 
 document.getElementById('users-notice').addEventListener('click', () => {
@@ -337,6 +386,13 @@ document.getElementById('users-notice').addEventListener('click', () => {
   document.getElementById('profile-page').classList.add('close');
   openCatalogForAdmins();
 });
+
+document.getElementById('to-profile-from-alls').addEventListener('click', () => {
+  document.getElementById('profile-page').classList.remove('close');
+  document.getElementById('all-users').classList.add('close');
+  deleteCatalog('admin-pages');
+  deleteCatalog('user-pages');
+})
 
   
 // формирование страницы услуг
@@ -512,7 +568,7 @@ function showMessage(id, text) {
 document.getElementById('to-pofile-from-catalog').addEventListener('click', () => {
   document.getElementById('catalog-page').classList.add('close');
   document.getElementById('profile-page').classList.remove('close');
-  deleteCatalog();
+  deleteCatalog('catalog-page-cards');
 })
 
 document.getElementById('add-service').addEventListener('click', editServices);
