@@ -10,7 +10,66 @@ window.addEventListener('DOMContentLoaded', () => {
     replaceText(`${type}-version`, process.versions[type])
   }
 
+
+  document.getElementById('exit').addEventListener('click', window.close);
+
 const bcrypt = require('bcrypt');
+
+  function createDoc(fileName, data) {
+    var PizZip = require('pizzip');
+    var Docxtemplater = require('docxtemplater');
+
+    var fs = require('fs');
+    var path = require('path');
+
+
+    function replaceErrors(key, value) {
+      if (value instanceof Error) {
+        return Object.getOwnPropertyNames(value).reduce(function (error, key) {
+          error[key] = value[key];
+          return error;
+        }, {});
+      }
+      return value;
+    }
+
+    function errorHandler(error) {
+      console.log(JSON.stringify({ error: error }, replaceErrors));
+
+      if (error.properties && error.properties.errors instanceof Array) {
+        const errorMessages = error.properties.errors.map(function (error) {
+          return error.properties.explanation;
+        }).join("\n");
+        console.log('errorMessages', errorMessages);
+      }
+      throw error;
+    }
+    var content = fs
+      .readFileSync(path.resolve(__dirname, `${fileName}.docx`), 'binary');
+
+    var zip = new PizZip(content);
+    var doc;
+    try {
+      doc = new Docxtemplater(zip);
+    } catch (error) {
+      errorHandler(error);
+    }
+
+    doc.setData(data);
+
+    try {
+      doc.render()
+    }
+    catch (error) {
+      errorHandler(error);
+    }
+
+    var buf = doc.getZip()
+      .generate({ type: 'nodebuffer' });
+
+    fs.writeFileSync(path.resolve(__dirname, `${fileName}.docx`), buf);
+
+  }
 
 // подключение MySql
 
@@ -308,7 +367,7 @@ function openCatalogForAdmins() {
           let allCatalogCard = document.createElement('div');
           allCatalogCard.innerHTML = `
           <div id="admin-${i}" class="catalog-card adm">
-          <span class="user-info for-adm log-for-adm-${i}">${rez[i]['Log_in']}</span>
+          <span class="user-info for-adm">${rez[i]['Log_in']}</span>
           <span class="user-info for-adm">${rez[i]['Full_Name']}</span>
           <span class="user-info for-adm">${rez[i]['Email']}</span>
           <span class="user-info for-adm">${rez[i]['Phone_Number']}</span>
@@ -351,6 +410,7 @@ function openCatalogForAdmins() {
               console.log(i);
               document.getElementById(`make-admin-${i}`).addEventListener('click', () => {
                 let user = document.getElementsByClassName(`log-for-adm-${i}`)[0].textContent;
+                console.log(user);
                 makeAdmin(user);
               })
             }

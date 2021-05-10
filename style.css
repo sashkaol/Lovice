@@ -13,6 +13,24 @@
     src: url(font/Neucha-Regular.ttf);
 }
 
+.exit {
+    background-color: rgba(253, 59, 59, 0.6);
+    color: #F7EEED;
+    font-size: 20px;
+    font-family: "font";
+    border-radius: 30px;
+    outline: none;
+    border: none;
+    transition: ease-in-out 0.4s;
+    width: 150px;
+    height: 54px;
+}
+
+.exit:hover {
+    transition: ease-in-out 0.4s;
+    cursor: pointer;
+}
+
 .navbar {
     width: 100%;
     height: 75px;
@@ -371,6 +389,14 @@
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
+}
+
+.caption {
+    font-family: "font";
+    font-size: 48px;
+    color: #F7EEED;
+    line-height: normal;
+    margin-top: 10px;
 }
 
 .catalog-page-cards {
