@@ -167,7 +167,7 @@ function openUserProfile() {
     if (err) {
       console.log(err);
     } else {
-      document.getElementById('profile-select').innerHTML = `<div><span class="main-info">Мое имя:</span> ${rez[0]['Full_Name']}</div><br/>
+      document.getElementById('profile-text').innerHTML = `<div><span class="main-info">Мое имя:</span> ${rez[0]['Full_Name']}</div><br/>
             <div><span class="main-info">Мой возраст:</span> ${ageCalc(rez[0]['Age'])}</div><br/>
             <div><span class="main-info">Мой номер телефона:</span> ${rez[0]['Phone_Number']}</div><br/>
             <div><span class="main-info">Обо мне:</span> ${rez[0]['About_me']}</div>`;
@@ -191,7 +191,7 @@ function openUserProfile() {
 }
 
 function exitFromProfile() {
-  document.getElementById('profile-select').innerHTML = '';
+  document.getElementById('profile-text').innerHTML = '';
   document.getElementById('profile-photo').innerHTML = ''; 
   document.getElementById('profile-page').classList.add('close');
   connection.query(`SELECT Users.Level FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {

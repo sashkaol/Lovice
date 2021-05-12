@@ -13,9 +13,17 @@
     src: url(font/Neucha-Regular.ttf);
 }
 
+.img-nav {
+    height: 44px;
+}
+
+.icon {
+    height: 62.8px;
+}
+
 .exit {
-    background-color: rgba(253, 59, 59, 0.6);
-    color: #F7EEED;
+    background-color: #F7EEED;
+    color: #E4B2B4;
     font-size: 20px;
     font-family: "font";
     border-radius: 30px;
@@ -26,9 +34,38 @@
     height: 54px;
 }
 
+.quote {
+    font-style: italic;
+    text-align: right;
+    font-size: 15px;
+}
+
+.for-new-users {
+    background: #fff;
+    color: #a17071;
+    font-size: 24px;
+    text-align: center;
+    font-family: "font";
+    border-radius: 30px;
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.welcome {
+    font-size: 36px;
+    font-weight: 400;
+}
+
 .exit:hover {
     transition: ease-in-out 0.4s;
     cursor: pointer;
+    background-color: rgba(253, 59, 59, 0.6);
+    color: #F7EEED;
+    box-shadow: 0 6px 5px 0 rgb(253 59 59 / 10%), 0 1px 5px 5px rgb(253 59 59 / 30%), 0 3px 5px 0 rgb(253 59 59 / 50%);
+    cursor: pointer; 
 }
 
 .navbar {
@@ -352,7 +389,7 @@
 }
 
 .profile-photo {
-    max-width: 200px;
+    max-width: 300px;
     padding: 15px 0 0 15px;
 }
 
@@ -520,17 +557,29 @@
 }
 
 .profile-information {
+    display: flex;
+    justify-content: space-around;
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 30px;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.profile-text {
     font-family: "font";
     font-size: 24px;
     color: #E4B2B4;
-    background-color: #fff;
-    border-radius: 30px;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     box-sizing: border-box;
     min-width: none;
+}
+
+.profile-photo {
+    border-radius: 30px;
+    background-color: #E4B2B4;
 }
 
 .main-info {

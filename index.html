@@ -15,30 +15,35 @@
     <div class="navbar">
       <div class="navbar__wrapp">
         <div class="left nav">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icons icon icon-tabler icon-tabler-heart" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f7eeed" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-            <path d="M19.5 13.572l-7.5 7.428l-7.5 -7.428m0 0a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
-          </svg>
+          <img src="img/hearts--v3.png" class="icon" alt="icon">
           <div class="caption">Lovice</div>
         </div>
         <div class="nav right">
           <div class="search">
             <input id="search-input" class="search__text" placeholder="Поиск..." />
             <div id="search-but-main" class="search__img">
-              <svg xmlns="http://www.w3.org/2000/svg" class="icons icon icon-tabler icon-tabler-search" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#F7EEED" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <circle cx="10" cy="10" r="7" />
-                <line x1="21" y1="21" x2="15" y2="15" />
-              </svg>
+              <img class="img-nav" src="img/search--v2 (1).png" alt="search">
             </div>
           </div>
-          <button id="exit" class="exit red">Выход из приложения</button>
+          <button id="exit" class="exit">Выход из приложения</button>
         </div>
       </div>
     </div>
   </header>
   <div id="navigate-list" class="navigate-list close">
     <div class="navigate-list__wrapp">
+      <div class="for-new-users">
+          <p class="quote">- Вам известно, сколько в стране одиноких людей?
+            <br>
+            - Известно, к сожалению.
+            <br>
+            - Ведь это ж угрожающая цифра, честное слово. Ведь одинокий человек - это что такое? <br> Падает рождаемость, алкоголизм возрастает, это отражается на производительности труда. <br> В конечном счете, одинокий человек неполноценно трудится...
+            <p class="quote">&copy; Москва слезам не верит</p>
+          </p>
+        <p class="welcome">Добро пожаловать в Lovice!</p>    
+        <p>Не можете найти пару? Душитесь по ночам вином и плачете в подушку, потому что нет плеча любимого человека, в которое можно было бы уткнуться? Заедаете одиночество пиццей и роллами? Выход есть! И он прямо за этой страницей!</p>
+        <p>Скорее регистрируйтесь в Lovice или заходите, если у Вас уже есть аккаунт в нашем уютном пристанище! :)</p>
+      </div>
       <button id="to-reg" class="but">Регистрация</button>
       <button id="to-sign-in" class="but">Вход</button>
     </div>
@@ -112,11 +117,13 @@
       Вы успешно вошли в систему!
     </div>
     <div id="profile-info" class="">
-      <div id="profile-photo" class="profile-photo">
-    
-      </div>
       <div id="profile-select" class="profile-information">
+        <div id="profile-photo" class="profile-photo">
+    
+        </div>
+        <div id="profile-text" class="profile-text">
 
+        </div>
       </div>
       <div id="admin-tools" class="admin-tools tools-close">
         <button id="users-notice" class="but">Мониторинг пользователей</button>
