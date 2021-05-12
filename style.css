@@ -23,7 +23,7 @@
 
 .exit {
     background-color: #F7EEED;
-    color: #E4B2B4;
+    color: #D1878A;
     font-size: 20px;
     font-family: "font";
     border-radius: 30px;
@@ -62,9 +62,9 @@
 .exit:hover {
     transition: ease-in-out 0.4s;
     cursor: pointer;
-    background-color: rgba(253, 59, 59, 0.6);
+    background-color: #9F3236;
     color: #F7EEED;
-    box-shadow: 0 6px 5px 0 rgb(253 59 59 / 10%), 0 1px 5px 5px rgb(253 59 59 / 30%), 0 3px 5px 0 rgb(253 59 59 / 50%);
+    box-shadow: 0 6px 5px 0 #9F3236, 0 1px 5px 5px #9F3236, 0 3px 5px 0 #9F3236;
     cursor: pointer; 
 }
 
@@ -74,8 +74,8 @@
     position: fixed;
     z-index: 2;
     top: 0;
-    background-color: #E4B2B4;
-    box-shadow: 0 13px 40px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4;
+    background-color: #D1878A;
+    box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
 }
 
 .navbar__wrapp {
@@ -137,12 +137,12 @@
     border-radius: 30px;
     padding-left: 15px;
     padding-right: 15px;
-    color: #E4B2B4;
+    color: #D1878A;
 }
 
 *::placeholder {
     /*color: rgba(140, 108, 110, 0.5);*/
-    color: #E4B2B4;
+    color: #D1878A;
     opacity: 0.6;
 }
 
@@ -199,7 +199,7 @@
 .act-but {
     width: 100%;
     height: 54px;
-    background-color:#E4B2B4;
+    background-color:#D1878A;
     border-radius: 30px;
     outline: none;
     border: none;
@@ -213,8 +213,8 @@
 .act-but:hover {
     cursor: pointer;
     background-color: #F7EEED;
-    color: #E4B2B4;
-    box-shadow: 0 13px 40px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4;
+    color: #D1878A;
+    box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
     transition: ease-out 0.4s;
 }
 
@@ -222,7 +222,7 @@
     max-width: 400px;
     width: 100%;
     height: 54px;
-    background-color:#E4B2B4;
+    background-color:#D1878A;
     border-radius: 30px;
     outline: none;
     border: none;
@@ -254,10 +254,10 @@
 .but:hover {
     cursor: pointer;
     background-color: #F7EEED;
-    color: #E4B2B4;
+    color: #D1878A;
     /*box-shadow: 0 14px 28px rgba(140, 108, 110, 0.5), 0 10px 10px rgba(140, 108, 110, 0.5);*/
     transition: ease-out 0.4s;
-    box-shadow: 0 13px 40px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4;
+    box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
 }
 
 .close {
@@ -265,7 +265,7 @@
 }
 
 .card {
-    background-color: #E4B2B4;
+    background-color: #D1878A;
     font-family: "font";
     color: #F7EEED;
     font-size: 24px;
@@ -279,12 +279,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 13px 40px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4;
+    box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
     gap: 10px;
 
     /*
-    0 13px 10px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4
-    0 13px 40px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4
+    0 13px 10px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A
+    0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A
     */
 }
 
@@ -327,11 +327,11 @@
     width: 90px !important;
     height: 40px !important;
     background-color: #F7EEED !important;
-    color: #E4B2B4 !important;
+    color: #D1878A !important;
 }
 
 .card-but:hover {
-    background-color:#E4B2B4 !important;
+    background-color:#D1878A !important;
     color:#F7EEED !important; 
     box-shadow: 0px 0px 0 #F7EEED, 0 4px 5px 1px #F7EEED, 0 2px 1px 0 #F7EEED !important;
 }
@@ -385,7 +385,7 @@
     font-family: "font";
     font-size: 36px;
     font-weight: 500;
-    color: #E4B2B4;
+    color: #D1878A;
 }
 
 .profile-photo {
@@ -398,7 +398,7 @@
 }
 
 .for-error-message {
-    background-color: rgba(253, 59, 59, 0.6);
+    background-color: #9F3236;
     border-radius: 30px;
     font-family: "font";
     font-size: 22px;
@@ -451,7 +451,7 @@
 
 .catalog-card {
     border-radius: 30px;
-    background-color: #E4B2B4;
+    background-color: #D1878A;
     width: 200px;
     min-height: 300px;
     box-sizing: border-box;
@@ -459,7 +459,7 @@
     display: flex;
     gap: 10px;
     flex-direction: column;
-    box-shadow: 0 13px 40px 0 #e4b2b4, 0 13px 40px 5px #fff, 0 3px 5px 0 #e4b2b4;
+    box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
 }
 
 .user-info {
@@ -532,12 +532,12 @@
 }
 
 .dis {
-    background-color:rgba(255, 113, 113, 1);
+    background-color:#9F3236;
     color: #F7EEED;
 }
 
 .dis:hover {
-    box-shadow: 0 3px 20px 0 rgba(255, 113, 113, 1), 0 3px 7px 2px rgba(255, 113, 113, 1), 0 9px 5px 0 rgba(255, 113, 113, 1);
+    box-shadow: 0 3px 20px 0 #9F3236, 0 3px 7px 2px #9F3236, 0 9px 5px 0 #9F3236;
 }
 
 .like {
@@ -569,7 +569,7 @@
 .profile-text {
     font-family: "font";
     font-size: 24px;
-    color: #E4B2B4;
+    color: #D1878A;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -579,7 +579,7 @@
 
 .profile-photo {
     border-radius: 30px;
-    background-color: #E4B2B4;
+    background-color: #F7EEED;
 }
 
 .main-info {
@@ -587,13 +587,13 @@
 }
 
 .red {
-    background-color:rgba(255, 113, 113, 1) !important;
+    background-color:#9F3236 !important;
 }
 
 .red:hover {
     background-color: #F7EEED !important;
-    color: rgba(255, 113, 113, 1);
-    box-shadow: 0 13px 40px 0 rgba(255, 113, 113, 1), 0 13px 40px 5px #fff, 0 3px 5px 0 rgba(255, 113, 113, 1) !important;
+    color: #9F3236;
+    box-shadow: 0 13px 40px 0 #9F3236, 0 13px 40px 5px #fff, 0 3px 5px 0 #9F3236 !important;
 }
 
 .bottom {
