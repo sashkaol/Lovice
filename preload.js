@@ -622,19 +622,30 @@ document.getElementById('search-but-main').addEventListener('click', () => {
 })
 
 document.getElementById('delete-profile-user').addEventListener('click', () => {
-  console.log('вы хотите удалить профиль?');
-  connection.query(`INSERT INTO Lovice.Archive SELECT * FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-    if (err) {
-      console.log(err);
-    } else {
-      connection.query(`DELETE FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log('ваш аккаунт успешно удален');
-        }
-      })
-    }
+  document.getElementById('profile-page').classList.add('close');
+  document.getElementById('delete-profile-page').classList.remove('close');
+  document.getElementById('come-back').addEventListener('click', () => {
+    document.getElementById('profile-page').classList.remove('close');
+    document.getElementById('delete-profile-page').classList.add('close');
+  })
+  document.getElementById('delete-profile').addEventListener('click', () => {
+    connection.query(`INSERT INTO Lovice.Archive SELECT * FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+      if (err) {
+        console.log(err);
+      } else {
+        connection.query(`DELETE FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+          if (err) {
+            console.log(err);
+          } else {
+            showMessage('success-delete', 'Ваш профиль успешно удален, ждем вас снова! :(');
+            setTimeout(() => {
+              document.getElementById('delete-profile-page').classList.add('close');
+              document.getElementById('navigate-list').classList.remove('close');
+            }, 3000)
+          }
+        })
+      }
+    })
   })
 })
 
