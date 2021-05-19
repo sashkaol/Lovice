@@ -101,17 +101,24 @@ document.getElementById('registrate').addEventListener('click', () => {
   if (/^[а-яё]+ [а-яё]+$/i.test(name) == false || name === '') {
     showMessage('error-name', 'Имя может содержать только русские буквы и пробелы');
     errors++
-  } else errors--
+  }
   let login = document.getElementById('login').value;
   if (/^[a-z]+$/i.test(login) == false || login === '') {
     showMessage('error-login', 'Логин может содержать только английские буквы');
     errors++
-  } else errors--
+  } else {
+    connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Log_in = '${login}';`, (err, rez) => {
+      if (rez[0]['Kolvo'] > 0) {
+        showMessage('error-login', 'Этот логин уже занят!');
+        errors++
+      }
+    })
+  }
   let email = document.getElementById('email').value;
   if (email.includes('@') == false || email === '') {
     showMessage('error-email', 'Почта должна содержать значок @');
     errors++
-  } else errors--
+  } 
   let gender = document.getElementsByName('gender');
   let pol;
   for (let i = 0; i < gender.length; i++) {
@@ -121,10 +128,10 @@ document.getElementById('registrate').addEventListener('click', () => {
     }
   }
   let phone = document.getElementById('phone').value;
-  if (/^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/.test(phone) == false || phone === '') {
-    showMessage('error-phone', 'Перепроверьте введенный номер');
+  if (/^(\+7|7|8)[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}$/.test(phone) == false || phone === '') {
+    showMessage('error-phone', 'Перепроверьте введенный номер, он должен соответстовать шаблону 80000000000 или +70000000000');
     errors++
-  } else errors--
+  } 
   let birthday = document.getElementById('birthday').value;
   let birthdayDate = new Date(birthday);
     let nowDate = new Date();
@@ -137,17 +144,17 @@ document.getElementById('registrate').addEventListener('click', () => {
     } else if (nowDate.getFullYear()-birthdayDate.getFullYear() < 16) {
       showMessage('error-date', 'Детям вход запрещен!');
       errors++
-    } else errors--
+    } 
   let about = document.getElementById('about_me').value; 
   if (about === '') {
-    showMessage('error-about', 'Эй, напиши о себе! Мы любим знакомиться с людьми поближе!');
+    showMessage('error-about', 'Эй, напишите о себе! Мы любим знакомиться с людьми поближе!');
     errors++
-  }  else errors--
+  } 
   let password = document.getElementById('password').value;
   if (password.length < 10 || password.includes('0-9') == false) {
     showMessage('error-enter-pass', 'Пароль ненадежен: он должен быть длиной более 10 символов и включать в себя цифры');
     errors++
-  } else errors--
+  } 
   let salt = bcrypt.genSaltSync(1);
   password = bcrypt.hashSync(password, salt);
   console.log(password);
@@ -157,31 +164,22 @@ document.getElementById('registrate').addEventListener('click', () => {
   if (password != password_repeat) {
     showMessage('error-password', 'Пароли не совпадают');
     errors++
-  } else errors--
+  }
+
+  console.log(errors);
 
     if (errors <= 0) {
       let query = '';
       query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${pol}', '${about}', 'user', NULL);`;
-      console.log('вы зарегались');
-      //clearInputs();
-      showMessage('success-reg', 'Вы успешно зарегистрировались!');
-      //document.getElementById('')
-      console.log(query);
-    
+      connection.query(query, (err, rez) => {
+        if (err) {
+          console.log(err);
+        } else  {
+          clearInputs();
+          showMessage('success-reg', 'Вы успешно зарегистрировались!');
+        }
+      })
     }
-    // connection.query(query, (err, result) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     connection.query('SELECT * FROM Lovice.Users;', (err, rez) => {
-    //       if (err) {
-    //         console.log(err);
-    //       } else {
-    //         console.log(rez);
-    //       }
-    //     })
-    //   }  
-    // }) 
 })
 
 // вход в систему

@@ -565,6 +565,7 @@
     padding: 30px;
     align-items: center;
     box-sizing: border-box;
+    min-width: 900px;
 }
 
 .profile-text {
