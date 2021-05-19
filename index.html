@@ -52,24 +52,32 @@
     <div class="lovice-forms">
       <div class="labels">Полное имя</div>
       <input class="inputs" type="text" name="" id="name" placeholder="Александр Александров" required/>
+      <div id="error-name" class="for-error-message close"></div>
       <div class="labels gender">
         <div class="labels"><input id="gen" value="female" class="inputs radio" type="radio" name="gender" checked />Я женщина</div>
         <div class="labels"><input id="gen" value="male" class="inputs radio" type="radio" name="gender">Я мужчина</div>
       </div>
       <div class="labels">Логин</div>
       <input class="inputs" type="text" name="" id="login" placeholder="Sasha" required/>
+      <div id="error-login" class="for-error-message close"></div>
       <div class="labels">Электронная почта</div>
       <input class="inputs" type="email" name="" id="email" placeholder="mail@mail.com" required/>
+      <div id="error-email" class="for-error-message close"></div>
       <div class="labels">Номер телефона</div>
       <input class="inputs" type="tel" name="" id="phone" placeholder="89612704567" required/>
+      <div id="error-phone" class="for-error-message close"></div>
       <div class="labels">Дата рождения</div>
       <input class="inputs" type="date" name="" id="birthday" placeholder="DD.MM.YYYY" required/>
+      <div id="error-date" class="for-error-message close"></div>
       <div class="labels">Пара слов о себе</div>
-      <textarea class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" required></textarea>
+      <textarea maxlength="255" class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" required></textarea>
+      <div id="error-about" class="for-error-message close"></div>
       <div class="labels">Пароль</div>
       <input class="inputs" type="password" name="" id="password" placeholder="Ваш пароль" required/>
+      <div id="error-enter-pass" class="for-error-message close"></div>
       <div class="labels">Повторите пароль</div>
       <input class="inputs" type="password" name="" id="password_repeat" placeholder="Ваш пароль" required/>
+      <div id="error-password" class="for-error-message close"></div>
       <button id="registrate" class="act-but" >Зарегистрироваться</button>
       <div id="success-reg" class="for-message close"></div>
     </div>
@@ -171,9 +179,24 @@
     </div>
     <button id="to-profile-from-chc" class="but bottom">Назад</button>
   </div>
-  <div id="overlay" class="overlay">
+  <div id="create-contract-page" class="create-contract page close">
+    <div class="lovice-forms contract-form">
+      <div class="labels">Вы</div>
+      <div id="this-user-name" class="inputs"></div>
+      <div class="labels">Выбранный пользователь</div>
+      <div id="person">
+        <div id="person__wrapp" class="person__wrapp">
 
+        </div>
+      </div>
+      <div class="labels">Выбранное заведение</div>
+      <div id="club-for-contract" class="inputs list"></div>
+      <div class="labels">Выбранные услуги</div>
+      <div id="services-for-contract" class="inputs list"></div>
+      <button id="create-contract-but" class="but">Завершить оформление</button>
+    </div>
   </div>
+ 
   <!--<script src="./preload.js"></script>-->
   <script src="./renderer.js"></script>
 </body>

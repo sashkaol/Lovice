@@ -95,10 +95,23 @@ connection.connect( (err) => {
 // регистрация пользователя в системе
 
 document.getElementById('registrate').addEventListener('click', () => {
+  let errors = 0;
   // рабочий код, не трогать!
   let name = document.getElementById('name').value;
+  if (/^[а-яё]+ [а-яё]+$/i.test(name) == false || name === '') {
+    showMessage('error-name', 'Имя может содержать только русские буквы и пробелы');
+    errors++
+  } else errors--
   let login = document.getElementById('login').value;
+  if (/^[a-z]+$/i.test(login) == false || login === '') {
+    showMessage('error-login', 'Логин может содержать только английские буквы');
+    errors++
+  } else errors--
   let email = document.getElementById('email').value;
+  if (email.includes('@') == false || email === '') {
+    showMessage('error-email', 'Почта должна содержать значок @');
+    errors++
+  } else errors--
   let gender = document.getElementsByName('gender');
   let pol;
   for (let i = 0; i < gender.length; i++) {
@@ -108,9 +121,33 @@ document.getElementById('registrate').addEventListener('click', () => {
     }
   }
   let phone = document.getElementById('phone').value;
+  if (/^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/.test(phone) == false || phone === '') {
+    showMessage('error-phone', 'Перепроверьте введенный номер');
+    errors++
+  } else errors--
   let birthday = document.getElementById('birthday').value;
-  let about = document.getElementById('about_me').value;  
+  let birthdayDate = new Date(birthday);
+    let nowDate = new Date();
+    if (birthdayDate.getFullYear() > nowDate.getFullYear()) {
+      showMessage('error-date', 'Вы не можете родиться в будущем!');
+      errors++
+    } else if (nowDate.getFullYear()-birthdayDate.getFullYear() > 100) {
+      showMessage('error-date', 'Вы не можете быть старше 100 лет, вы что тут делаете...');
+      errors++
+    } else if (nowDate.getFullYear()-birthdayDate.getFullYear() < 16) {
+      showMessage('error-date', 'Детям вход запрещен!');
+      errors++
+    } else errors--
+  let about = document.getElementById('about_me').value; 
+  if (about === '') {
+    showMessage('error-about', 'Эй, напиши о себе! Мы любим знакомиться с людьми поближе!');
+    errors++
+  }  else errors--
   let password = document.getElementById('password').value;
+  if (password.length < 10 || password.includes('0-9') == false) {
+    showMessage('error-enter-pass', 'Пароль ненадежен: он должен быть длиной более 10 символов и включать в себя цифры');
+    errors++
+  } else errors--
   let salt = bcrypt.genSaltSync(1);
   password = bcrypt.hashSync(password, salt);
   console.log(password);
@@ -118,28 +155,33 @@ document.getElementById('registrate').addEventListener('click', () => {
   password_repeat = bcrypt.hashSync(password_repeat, salt);
   console.log(password_repeat);
   if (password != password_repeat) {
-    console.log('пароли разные');
-  } else {
-    let query ='';
-    query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${pol}', '${about}', 'user', NULL);`;
-    console.log('вы зарегались');
-    clearInputs();
-    showMessage('success-reg', 'Вы успешно зарегистрировались!');
-    console.log(query);
-    connection.query(query, (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        connection.query('SELECT * FROM Lovice.Users;', (err, rez) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(rez);
-          }
-        })
-      }  
-    }) 
-  }
+    showMessage('error-password', 'Пароли не совпадают');
+    errors++
+  } else errors--
+
+    if (errors <= 0) {
+      let query = '';
+      query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${pol}', '${about}', 'user', NULL);`;
+      console.log('вы зарегались');
+      //clearInputs();
+      showMessage('success-reg', 'Вы успешно зарегистрировались!');
+      //document.getElementById('')
+      console.log(query);
+    
+    }
+    // connection.query(query, (err, result) => {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     connection.query('SELECT * FROM Lovice.Users;', (err, rez) => {
+    //       if (err) {
+    //         console.log(err);
+    //       } else {
+    //         console.log(rez);
+    //       }
+    //     })
+    //   }  
+    // }) 
 })
 
 // вход в систему
@@ -148,6 +190,7 @@ var this_login = '';
 var this_password = '';
 var this_salt = '';
 var user_password = '';
+var id_user = '';
 var inputs = document.querySelectorAll('input:not([type=checkbox]):not([type=radio])');
 var textareas = document.querySelectorAll('textarea');
 
@@ -160,18 +203,23 @@ function clearInputs() {
   })
 }
 
+let thisUserName;
+
 function openUserProfile() {
   document.getElementById('hello-page').classList.add('close');
   document.getElementById('profile-info').classList.remove('close');
-  connection.query(`SELECT Users.Full_Name, (YEAR(CURRENT_DATE)-YEAR(Users.Birthday)) AS 'Age', Users.Phone_Number, Users.About_me, Users.Gender, Users.Level FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
+  connection.query(`SELECT Users.Id, Users.Full_Name, (YEAR(CURRENT_DATE)-YEAR(Users.Birthday)) AS 'Age', Users.Phone_Number, Users.About_me, Users.Gender, Users.Level FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
     if (err) {
       console.log(err);
     } else {
+      id_user = rez[0]['Id'];
+      console.log('id ' + id_user);
       document.getElementById('profile-text').innerHTML = `<div><span class="main-info">Мое имя:</span> ${rez[0]['Full_Name']}</div><br/>
             <div><span class="main-info">Мой возраст:</span> ${ageCalc(rez[0]['Age'])}</div><br/>
             <div><span class="main-info">Мой номер телефона:</span> ${rez[0]['Phone_Number']}</div><br/>
             <div><span class="main-info">Обо мне:</span> ${rez[0]['About_me']}</div>`;
       var photo_title;
+      thisUserName = rez[0]['Full_Name'];
       if (rez[0]['Gender'] == 'female') {
         console.log(rez[0]['Gender']);
         photo_title = 'img/woman-1.svg';
@@ -320,7 +368,7 @@ function ageCalc(user_age) {
         console.log(err);
       } else {
         let kolvo = rez[0]['Kol_vo'];
-        connection.query(`SELECT Users.Full_Name, (YEAR(CURRENT_DATE)-YEAR(Users.Birthday)) AS 'Age', Users.About_me FROM Lovice.Users WHERE Users.Level <> 'admin' AND Users.Log_in <> '${this_login}';`, (err, rez) => {
+        connection.query(`SELECT Users.Id, Users.Full_Name, (YEAR(CURRENT_DATE)-YEAR(Users.Birthday)) AS 'Age', Users.About_me FROM Lovice.Users WHERE Users.Level <> 'admin' AND Users.Log_in <> '${this_login}';`, (err, rez) => {
           if (err) {
             console.log(err);
           } else {
@@ -329,12 +377,62 @@ function ageCalc(user_age) {
               user_age = rez[i]['Age'];
               user_about = rez[i]['About_me'];
               let catalog_card = document.createElement('div');
-              catalog_card.innerHTML = `<div id="user-${i}" class="catalog-card"><div class="user-info">${user_name}</div><div class="user-info">${ageCalc(user_age)}</div><div class="user-info big">${user_about}</div><div class="user-buts"><button class="user-but like"><img class="likes" src="img/facebook-like.png"></button><button class="user-but dis"><img class="likes" src="img/thumbs-down--v2.png"></button></div></div>`;
+              catalog_card.innerHTML = `<div id="user-${i}" class="catalog-card"><div class="user-info">${user_name}</div><div class="user-info">${ageCalc(user_age)}</div><div class="user-info big">${user_about}</div><div class="user-buts"><button id='to-contract-${i}' class="user-but like"><img class="likes" src="img/facebook-like.png"></div></div>`;
               document.getElementById("catalog-page-cards").appendChild(catalog_card);
+              document.getElementById(`to-contract-${i}`).addEventListener('click', () => {
+                createContract(rez[i]['Id'], `user-${i}`);
+              })
             }
           }
         })  
       }
+    })
+  }
+
+  function createContract(id, person) {
+    console.log(id, person);
+    document.getElementById('this-user-name').innerHTML = `${thisUserName}`;
+    let pers = document.getElementById(person);
+    document.getElementById('person__wrapp').appendChild(pers);
+    document.getElementById('create-contract-page').classList.remove('close');
+    document.getElementById('catalog-page').classList.add('close');
+    openServiceList();
+    openClubList();
+  }
+
+  function openServiceList() {
+    connection.query(`SELECT COUNT (*) AS 'KOLVO' FROM Lovice.Services;`, (err, rez) => {
+      let kolvo = rez[0]['KOLVO'];
+      connection.query(`SELECT Services.ServiceName, Services.Description, Services.Cost FROM Lovice.Services;`, (err, rez) => {
+        for (let i = 0; i < kolvo; i++) {
+          let serviceItem = document.createElement('div');
+          serviceItem.innerHTML = `<div class="item">
+            <div class="name-form">${rez[i]['ServiceName']}</div>
+            <div class="desc-form">${rez[i]['Description']}</div>
+            <div>${rez[i]['Cost']} руб.</div>
+            <button class="but add-serv">&#10004;</button>
+          </div>`
+          document.getElementById('services-for-contract').appendChild(serviceItem);
+        }
+      })
+    })
+  }
+
+  function openClubList() {
+    connection.query(`SELECT COUNT (*) AS 'KOLVO' FROM Lovice.Clubs;`, (err, rez) => {
+      let kolvo = rez[0]['KOLVO'];
+      connection.query(`SELECT Clubs.Club_name, Clubs.Description, Clubs.Adress FROM Lovice.Clubs;`, (err, rez) => {
+        for (let i = 0; i < kolvo; i++) {
+          let serviceItem = document.createElement('div');
+          serviceItem.innerHTML = `<div class="item">
+            <div class="name-form">${rez[i]['Club_name']}</div>
+            <div class="desc-form">${rez[i]['Description']}</div>
+            <div class="adres-form">${rez[i]['Adress']}</div>
+            <button class="but add-serv">&#10004;</button>
+          </div>`
+          document.getElementById('club-for-contract').appendChild(serviceItem);
+        }
+      })
     })
   }
 
@@ -381,6 +479,9 @@ function openCatalogForAdmins() {
           </div>
           `;
           document.getElementById('admin-pages').appendChild(allCatalogCard);
+          document.getElementById(`make-user-${i}`).addEventListener('click', () => {
+            makeUser(rez[i]['Id']);
+          });
         }
         connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Level = 'user';`, (err, rez) => {
           kolvo = rez[0].Kolvo;
@@ -402,31 +503,12 @@ function openCatalogForAdmins() {
               </div>
               </div>`
               document.getElementById('user-pages').appendChild(allCatalogCard);
-            }
-          })
-          connection.query("SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Level = 'user';", (err, rez) => {
-            let kolvo = rez[0]['Kolvo'];
-            for (let i = 0; i < kolvo; i++) {
-              console.log(i);
               document.getElementById(`make-admin-${i}`).addEventListener('click', () => {
-                let user = document.getElementsByClassName(`log-for-adm-${i}`)[0].textContent;
-                console.log(user);
-                makeAdmin(user);
-              })
+                makeAdmin(rez[i]['Id']);
+              });
             }
           })
         })
-        /*connection.query("SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Level = 'admin';", (err, rez) => {
-          let kolvo = rez[0]['Kolvo'];
-          let i = allKolvo - kolvo;
-          for (i; i < kolvo; i++) {
-            document.getElementById(`make-user-${i}`).addEventListener('click', () => {
-              let user = document.getElementsByClassName(`log-for-adm-${i}`)[0].textContent;
-              makeAdmin(user);
-            })
-          }
-        })
-        })*/
       }
     })
     }
@@ -434,8 +516,15 @@ function openCatalogForAdmins() {
 }
 
 
-function makeAdmin(login) {
-  connection.query(`UPDATE Lovice.Users SET Users.Level = 'admin' WHERE Users.Log_in = '${login}';`);
+function makeAdmin(id) {
+  connection.query(`UPDATE Lovice.Users SET Users.Level = 'admin' WHERE Users.Id = '${id}';`);
+  deleteCatalog('admin-pages');
+  deleteCatalog('user-pages');
+  openCatalogForAdmins();
+}
+
+function makeUser(id) {
+  connection.query(`UPDATE Lovice.Users SET Users.Level = 'user' WHERE Users.Id = '${id}';`);
   deleteCatalog('admin-pages');
   deleteCatalog('user-pages');
   openCatalogForAdmins();
@@ -500,17 +589,17 @@ document.getElementById('search-but-main').addEventListener('click', () => {
     console.log('Авторизуйтесь в системе');
   } else {
     let search = document.getElementById('search-input').value;
-    connection.query(`SELECT * FROM Lovice.Users WHERE Users.Full_Name LIKE "%${search}%" OR Users.Log_in LIKE "%${search}%";`, (err, rez) => {
+    connection.query(`SELECT * FROM Lovice.Users WHERE Users.Full_Name LIKE CONCAT('%', ?, '%') OR Users.Log_in LIKE  CONCAT('%', ?, '%');`, [search, search], (err, rez) => {
     if (err) {
       console.log(err);
     } else {
       if (rez == '') {
-        connection.query(`SELECT * FROM Lovice.Services WHERE Services.ServiceName LIKE "%${search}%";`, (err, rez) => {
+        connection.query(`SELECT * FROM Lovice.Services WHERE Services.ServiceName LIKE CONCAT('%', ?, '%');`, [search], (err, rez) => {
           if (err) {
             console.log(err);
           } else {
             if (rez == '') {
-              connection.query(`SELECT * FROM Lovice.Clubs WHERE Clubs.Club_name LIKE "%${search}%";`, (err, rez) => {
+              connection.query(`SELECT * FROM Lovice.Clubs WHERE Clubs.Club_name LIKE  CONCAT('%', ?, '%');`, [search], (err, rez) => {
                 if (err) {
                   console.log(err);
                 } else {

@@ -149,7 +149,7 @@
 .page {
     max-width: 1140px;
     width: 100%;
-    margin: 125px auto;
+    margin: 125px auto 50px auto;
     background-color: #F7EEED;
     border-radius: 30px;
     padding: 30px;
@@ -158,7 +158,6 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    
 }
 
 .inputs {
@@ -234,7 +233,7 @@
 }
 
 .navigate-list {
-    margin: 125px auto 0 auto;
+    margin: 125px auto 50px auto;
     max-width: 1140px;
 }
 
@@ -406,7 +405,9 @@
     align-items: center;
     justify-content: center;
     color: #F7EEED;
-    height: 54px;
+    min-height: 54px;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .tools-close {
@@ -488,7 +489,7 @@
 }
 
 .user-but {
-    width: 78px;
+    width: 160px;
     height: 46px;
     /*border-radius: 30px;*/
     outline: none;
@@ -598,6 +599,75 @@
 
 .bottom {
     margin-top: 20px;
+}
+
+.contract-form {
+    max-width: 700px !important;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+    background-color: #F7EEED;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color:#D1878A;
+  }
+
+  .person__wrapp {
+      display: flex;
+      justify-content: center;
+  }
+  
+  *::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);*/
+    border-radius: 10px;
+    background-color: #f9f9fd;
+  }
+
+.list {
+    max-height: 300px;
+    height: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px;
+    box-sizing: border-box;
+    border: #fff solid 5px;
+    border-radius: 19px !important;
+}
+
+.name-form {
+    width: 100px;
+}
+
+.desc-form {
+    width: 300px;
+}
+
+.adres-form {
+    width: 75px;
+}
+
+.add-serv {
+    width: 30px !important;
+    height: 30px !important;
+    outline: none;
+}
+
+.item {
+    width: 675px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    border-radius: 30px;
+    height: 100px;
+    background-color: #F7EEED;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .for-message {
