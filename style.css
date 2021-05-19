@@ -443,7 +443,7 @@
     justify-content: center;
 }
 
-.admins-pages, .users-pages {
+.admins-pages, .users-pages, .archive-pages {
     justify-content: center;
     display: flex;
     gap: 20px;
