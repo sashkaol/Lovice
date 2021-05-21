@@ -15,6 +15,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const bcrypt = require('bcrypt');
 
+  // создание документа
+
   function createDoc(fileName, data) {
     var PizZip = require('pizzip');
     var Docxtemplater = require('docxtemplater');
