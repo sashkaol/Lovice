@@ -22,7 +22,6 @@ const bcrypt = require('bcrypt');
     var fs = require('fs');
     var path = require('path');
 
-
     function replaceErrors(key, value) {
       if (value instanceof Error) {
         return Object.getOwnPropertyNames(value).reduce(function (error, key) {
