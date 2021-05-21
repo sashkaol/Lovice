@@ -450,6 +450,10 @@
     flex-wrap: wrap;
 }
 
+.del-but {
+    width: 100% !important;
+}
+
 .caption {
     font-family: "font";
     font-size: 48px;
@@ -509,6 +513,10 @@
     height: 110px;
 }
 
+#to-profile-from-search {
+    margin-top: 20px;
+}
+
 .user-but {
     width: 160px;
     height: 46px;
@@ -525,8 +533,38 @@
     border-radius: 30px;
 }
 
+.search-clubs, .search-users, .search-services {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+}
+
+.search-item {
+    background-color: #fff !important;
+    font-family: "font";
+    font-size: 24px;
+    border-radius: 30px;
+    color: #D1878A;
+    padding: 20px;
+    box-sizing: border-box;
+    min-height: 120px;
+}
+
+.search-l {
+    margin-top: 20px;
+}
+
+.s-u {
+    margin-bottom: 20px;
+}
+
+.adres-search {
+    width: 175px;
+}
+
 .adm-but {
-    width: 122.5px;
+    width: 300%;
 }
 
 .adm {

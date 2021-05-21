@@ -19,6 +19,7 @@
           <div class="caption">Lovice</div>
         </div>
         <div class="nav right">
+          <div id="error-search" class="for-error-message close"></div>
           <div class="search">
             <input id="search-input" class="search__text" placeholder="Поиск..." />
             <div id="search-but-main" class="search__img">
@@ -70,7 +71,7 @@
       <input class="inputs" type="date" name="" id="birthday" placeholder="DD.MM.YYYY" required/>
       <div id="error-date" class="for-error-message close"></div>
       <div class="labels">Пара слов о себе</div>
-      <textarea maxlength="255" class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" required></textarea>
+      <textarea maxlength="400" class="inputs about" name="about_me" id="about_me" cols="30" rows="10" placeholder="Я люблю живопись и кофе!" required></textarea>
       <div id="error-about" class="for-error-message close"></div>
       <div class="labels">Пароль</div>
       <input class="inputs" type="password" name="" id="password" placeholder="Ваш пароль" required/>
@@ -140,7 +141,6 @@
         <button id="users-notice" class="but">Мониторинг пользователей</button>
         <button id="change-services" class="but">Редактировать услуги</button>
         <button id="change-clubs" class="but">Редактировать адреса</button>
-        <button id="delete-profile-admin" class="but red">Удалить аккаунт</button>
         <button id="exit-profile-admin" class="but red">Выйти</button>
       </div>
       <div id="user-tools" class="user-tools tools-close">
@@ -156,21 +156,32 @@
     <div id="last-chance" class="last-chance">
       <span class="hello-user">Вы действительно хотите удалить профиль? <br>
       После выполнения этого действия ваш профиль будет помещен в архив</span>
-      <div class="delete-buts">
+      <div id="delete-buts" class="delete-buts">
         <button id="come-back" class="user-but like delete">Нет, я с вами!</button>
         <button id="delete-profile" class="user-but dis delete">Удалить :(</button>
       </div>
       <div id="success-delete" class="for-message close"></div>
     </div>
   </div>
+  <div id="search-page" class="search-page page close">
+    <div id="search-list" class="search-list">
+      <div id="search-users" class="search-users"></div>
+      <div id="search-services" class="search-services"></div>
+      <div id="search-clubs" class="search-clubs"></div>
+    </div>
+    <button id="to-profile-from-search" class="but">В профиль</button>
+  </div>
   <div id="change-services-page" class="change-services page close">
     <div class="lovice-forms">
       <div id="service-name" class="labels">Название услуги</div>
       <input id="service-name-input" class="inputs" type="text" placeholder="Романтический ужин"/>
+      <div id="error-servName" class="for-error-message close"></div>
       <div id="service-cost" class="labels">Цена</div>
       <input id="service-cost-input" class="inputs" type="text" placeholder="500"/>
+      <div id="error-cost" class="for-error-message close"></div>
       <div id="service-description" class="labels">Описание</div>
-      <textarea id="service-desc-input" class="inputs about" type="text" placeholder="Романтический ужин при свечах"></textarea>
+      <textarea maxlength="400" id="service-desc-input" class="inputs about" type="text" placeholder="Романтический ужин при свечах"></textarea>
+      <div id="error-descServ" class="for-error-message close"></div>
       <button id="add-service" class="but">Добавить</button>
       <div id="success-add-serv" class="for-message close"></div>
       <button id="view-services" class="but">Просмотреть все услуги</button>
@@ -182,10 +193,13 @@
     <div class="lovice-forms">
       <div id="club-name" class="labels">Название заведения</div>
       <input id="club-name-input" class="inputs" type="text" placeholder="Выйду ночью в поле"/>
+      <div id="error-clubName" class="for-error-message close"></div>
       <div id="club-address" class="labels">Адрес</div>
       <input id="club-address-input" class="inputs" type="text" placeholder="ул. Конёвая, д1"/>
+      <div id="error-clubAdr" class="for-error-message close"></div>
       <div id="club-description" class="labels">Описание</div>
-      <textarea id="club-desc-input" class="inputs about" type="text" placeholder="Шикарное место для свиданий"></textarea>
+      <textarea maxlength="400" id="club-desc-input" class="inputs about" type="text" placeholder="Шикарное место для свиданий"></textarea>
+      <div id="error-clubDesc" class="for-error-message close"></div>
       <button id="add-club" class="but">Добавить</button>
       <div id="success-add-club" class="for-message close"></div>
       <button id="view-clubs" class="but">Просмотреть все заведения</button>

@@ -252,6 +252,7 @@ function exitFromProfile() {
     }
   });
   connection.query(`UPDATE Lovice.Users SET Users.User_online = NULL WHERE Users.Log_in = '${this_login}';`);
+  this_login = '';
   document.getElementById('navigate-list').classList.remove('close');
   document.getElementById('enter').addEventListener('click', enterWithLogin);
 }
@@ -318,7 +319,6 @@ function enterWithLogin() {
               user_password = rez[0]['Pass_word'];
               console.log(user_password);
               if (this_password != user_password) {
-                clearInputs();
                 console.log('Неверное имя пользователя или пароль');
                 showMessage('error-enter', 'Неверное имя пользователя или пароль!');
               } else {
@@ -334,8 +334,7 @@ function enterWithLogin() {
         }
       })
     } else if (rez[0]['Kolvo'] == 0) {
-      clearInputs();
-      showMessage('error-enter', 'Неверное имя пользователя или пароль!');
+      showMessage('error-enter', 'Пользователь не найден!');
     }
   })
 }
@@ -472,7 +471,6 @@ function openCatalogForAdmins() {
           <span class="user-info big for-adm">${rez[i]['About_me']}</span>
           <div class="user-buts">
           <button id="make-user-${i}" class="user-but like adm-but">В пользователи</button>
-          <button id="go-to-archive-${i}" class="user-but dis adm-but">В архив</button>
           </div>
           </div>
           `;
@@ -497,7 +495,6 @@ function openCatalogForAdmins() {
               <span class="user-info big for-adm">${rez[i]['About_me']}</span>
               <div class="user-buts">
               <button id="make-admin-${i}" class="user-but like adm-but">В админы</button>
-              <button id="go-to-archive-${i}" class="user-but dis adm-but">В архив</button>
               </div>
               </div>`
               document.getElementById('user-pages').appendChild(allCatalogCard);
@@ -513,11 +510,11 @@ function openCatalogForAdmins() {
   })
 }
 
-
 function makeAdmin(id) {
   connection.query(`UPDATE Lovice.Users SET Users.Level = 'admin' WHERE Users.Id = '${id}';`);
   deleteCatalog('admin-pages');
   deleteCatalog('user-pages');
+  deleteCatalog('archive-pages');
   openCatalogForAdmins();
 }
 
@@ -525,6 +522,7 @@ function makeUser(id) {
   connection.query(`UPDATE Lovice.Users SET Users.Level = 'user' WHERE Users.Id = '${id}';`);
   deleteCatalog('admin-pages');
   deleteCatalog('user-pages');
+  deleteCatalog('archive-pages');
   openCatalogForAdmins();
 }
 
@@ -540,86 +538,150 @@ document.getElementById('to-profile-from-alls').addEventListener('click', () => 
   deleteCatalog('admin-pages');
   deleteCatalog('user-pages');
 })
-
   
 // формирование страницы услуг
 
-connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Services;`, (err, rez) => {
-  if (err) {
-    console.log('damn');
-  } else {
-      console.log(rez[0]['Kolvo']);
-      let kolvo = rez[0]['Kolvo'];
-      connection.query(`SELECT Services.ServiceName, Services.Cost, Services.Description FROM Lovice.Services;`, (err, rez) => {
-        if (err) {
-          console.log('damn');
-        } else {
-          console.log(rez);
-          for (let i = 0; i < kolvo; i++ ) {
-            str = rez[i]['ServiceName'];
-            let cost = rez[i]['Cost'];
-            let desc = rez[i]['Description'];
-            let card = document.createElement('div');
-            card.innerHTML = `<div id="service-${i}" class="card"><span class="title">${str}</span><div id="service-desc-${i}" class="descript hidden">${desc}</div><div class="buy"><b>${cost} руб.</b><button class="card-but but">Выбрать</button></div></div>`;
-            document.getElementById('service-list').appendChild(card);
-          }  
-          for (let i = 0; i < kolvo; i++) {
-            document.getElementById(`service-${i}`).addEventListener('mouseover', () => {
-              document.getElementById(`service-desc-${i}`).classList.remove('hidden');
-              document.getElementById(`service-desc-${i}`).classList.add('visible');
-              //document.getElementById(`service-desc-${i}`).classList.remove('close');
-            })
-            document.getElementById(`service-${i}`).addEventListener('mouseout', () => {
-              document.getElementById(`service-desc-${i}`).classList.remove('visible');
-              document.getElementById(`service-desc-${i}`).classList.add('hidden');
-              //document.getElementById(`service-desc-${i}`).classList.add('close');
-            })
-          }       
-        }
-      });
-  }
-});
-
-//
-
-document.getElementById('search-but-main').addEventListener('click', () => {
-  if (this_login === '') {
-    console.log('Авторизуйтесь в системе');
-  } else {
-    let search = document.getElementById('search-input').value;
-    connection.query(`SELECT * FROM Lovice.Users WHERE Users.Full_Name LIKE CONCAT('%', ?, '%') OR Users.Log_in LIKE  CONCAT('%', ?, '%');`, [search, search], (err, rez) => {
+function servicesPageCreate() {
+  connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Services;`, (err, rez) => {
     if (err) {
-      console.log(err);
+      console.log('damn');
     } else {
-      if (rez == '') {
-        connection.query(`SELECT * FROM Lovice.Services WHERE Services.ServiceName LIKE CONCAT('%', ?, '%');`, [search], (err, rez) => {
+        console.log(rez[0]['Kolvo']);
+        let kolvo = rez[0]['Kolvo'];
+        connection.query(`SELECT Services.ServiceName, Services.Cost, Services.Description FROM Lovice.Services;`, (err, rez) => {
+          if (err) {
+            console.log('damn');
+          } else {
+            console.log(rez);
+            for (let i = 0; i < kolvo; i++ ) {
+              str = rez[i]['ServiceName'];
+              let cost = rez[i]['Cost'];
+              let desc = rez[i]['Description'];
+              let card = document.createElement('div');
+              card.innerHTML = `<div id="service-${i}" class="card"><span class="title">${str}</span><div id="service-desc-${i}" class="descript hidden">${desc}</div><div class="buy"><b>${cost} руб.</b></div></div>`;
+              document.getElementById('service-list').appendChild(card);
+            }  
+            for (let i = 0; i < kolvo; i++) {
+              document.getElementById(`service-${i}`).addEventListener('mouseover', () => {
+                document.getElementById(`service-desc-${i}`).classList.remove('hidden');
+                document.getElementById(`service-desc-${i}`).classList.add('visible');
+              })
+              document.getElementById(`service-${i}`).addEventListener('mouseout', () => {
+                document.getElementById(`service-desc-${i}`).classList.remove('visible');
+                document.getElementById(`service-desc-${i}`).classList.add('hidden');
+              })
+            }       
+          }
+        });
+    }
+  });
+}
+
+// 
+
+  document.getElementById('search-but-main').addEventListener('click', () => {
+    if (this_login === '') {
+      console.log(this_login);
+      showMessage('error-search', 'Авторизуйтесь в системе!');
+    } else {
+      let search = document.getElementById('search-input').value;
+      if (search === '') {
+        showMessage('error-search', 'Введите ваш запрос!');
+      } else {
+        deleteCatalog('search-users');
+        deleteCatalog('search-services');
+        deleteCatalog('search-clubs');
+        document.getElementById('search-page').classList.remove('close');
+      document.getElementById('profile-page').classList.add('close');
+      connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Full_Name LIKE CONCAT('%', ?, '%') OR Users.Log_in LIKE  CONCAT('%', ?, '%') OR Users.About_me LIKE CONCAT('%', ?, '%') AND Users.Level <> 'admin';`, [search, search, search], (err, rez) => {
+        let kolvo = rez[0]['Kolvo'];
+        connection.query(`SELECT Users.Log_in, Users.Full_Name, (YEAR(CURRENT_DATE)-YEAR(Users.Birthday)) AS 'Age', Users.About_me FROM Lovice.Users WHERE Users.Full_Name LIKE CONCAT('%', ?, '%') OR Users.Log_in LIKE  CONCAT('%', ?, '%') OR Users.About_me LIKE CONCAT('%', ?, '%') AND Users.Level <> 'admin';`, [search, search, search], (err, rez) => {
           if (err) {
             console.log(err);
           } else {
-            if (rez == '') {
-              connection.query(`SELECT * FROM Lovice.Clubs WHERE Clubs.Club_name LIKE  CONCAT('%', ?, '%');`, [search], (err, rez) => {
+            console.log(rez);
+                    if (kolvo > 0) {
+                      document.getElementById('search-users').innerHTML = '<span class="hello-user search-l s-u">Пользователи</span>';
+                      for (let i = 0; i < kolvo; i++) {
+                        let user = document.createElement('div');
+                        user.innerHTML = `<div class="item search-item">
+                      <div class="name-form">${rez[i]['Full_Name']}</div>
+                      <div class="desc-form">${rez[i]['Log_in']}</div>
+                      <div class="adres-search">${ageCalc(rez[i]['Age'])}</div>
+                      <div class="adres-search">${rez[i]['About_me']}</div>
+                      </div>`;
+                      document.getElementById('search-users').appendChild(user);
+                      }
+                    } else {
+                      document.getElementById('search-users').innerHTML = '<span class="hello-user search-l">Пользователи не найдены</span>';
+                    }
+            connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Services WHERE Services.ServiceName LIKE CONCAT('%', ?, '%');`, [search], (err, rez) => {
+              let kolvo = rez[0]['Kolvo'];
+              connection.query(`SELECT * FROM Lovice.Services WHERE Services.ServiceName LIKE CONCAT('%', ?, '%');`, [search], (err, rez) => {
                 if (err) {
                   console.log(err);
                 } else {
-                  if (rez == '') {
-                    console.log('по вашему запросу ничего не найдено');
+                  if (err) {
+                    console.log(err);
                   } else {
                     console.log(rez);
+                    if (kolvo > 0) {
+                      document.getElementById('search-services').innerHTML = '<span class="hello-user search-l">Услуги</span>';
+                      for (let i = 0; i < kolvo; i++) {
+                        let serv = document.createElement('div');
+                        serv.innerHTML = `<div class="item search-item">
+                      <div class="name-form">${rez[i]['ServiceName']}</div>
+                      <div class="desc-form">${rez[i]['Description']}</div>
+                      <div class="adres-search">${rez[i]['Cost']} руб.</div>
+                      </div>`;
+                      document.getElementById('search-services').appendChild(serv);
+                      }
+                    } else {
+                      document.getElementById('search-services').innerHTML = '<span class="hello-user search-l">Услуги не найдены</span>';
+                    }
+                    
                   }
+                  connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Clubs WHERE Clubs.Club_name LIKE  CONCAT('%', ?, '%');`, [search], (err, rez) => {
+                    console.log(rez[0]['Kolvo']);
+                    let kolvo = rez[0]['Kolvo'];
+                    connection.query(`SELECT * FROM Lovice.Clubs WHERE Clubs.Club_name LIKE  CONCAT('%', ?, '%');`, [search], (err, rez) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        console.log(rez);
+                        if (kolvo > 0) {
+                          document.getElementById('search-clubs').innerHTML = '<span class="hello-user search-l">Заведения</span>';
+                          for (let i = 0; i < kolvo; i++) {
+                            let club = document.createElement('div');
+                            club.innerHTML = `<div class="item search-item">
+                          <div class="name-form">${rez[i]['Club_name']}</div>
+                          <div class="desc-form">${rez[i]['Description']}</div>
+                          <div class="adres-search">${rez[i]['Adress']}</div>
+                          </div>`;
+                          document.getElementById('search-clubs').appendChild(club);
+                          }
+                        } else {
+                          document.getElementById('search-clubs').innerHTML = '<span class="hello-user search-l">Заведения не найдены</span>';
+                        } 
+                        
+                      }
+                    })
+                  })
                 }
               })
-            } else {
-              console.log(rez);
-            }
+            }) 
           }
         })
-      } else {
-        console.log(rez);
+      })
       }
     }
   })
-  }
-})
+
+  document.getElementById('to-profile-from-search').addEventListener('click', () => {
+    document.getElementById('profile-page').classList.remove('close');
+    document.getElementById('search-page').classList.add('close');
+    clearInputs();
+  })
 
 document.getElementById('delete-profile-user').addEventListener('click', () => {
   document.getElementById('profile-page').classList.add('close');
@@ -633,10 +695,12 @@ document.getElementById('delete-profile-user').addEventListener('click', () => {
       if (err) {
         console.log(err);
       } else {
+        connection.query(`UPDATE Lovice.Archive SET Archive.User_online = NULL;`);
         connection.query(`DELETE FROM Lovice.Users WHERE Users.Log_in = '${this_login}';`, (err, rez) => {
           if (err) {
             console.log(err);
           } else {
+            document.getElementById('delete-buts').classList.add('close');
             showMessage('success-delete', 'Ваш профиль успешно удален, ждем вас снова! :(');
             setTimeout(() => {
               document.getElementById('delete-profile-page').classList.add('close');
@@ -651,68 +715,111 @@ document.getElementById('delete-profile-user').addEventListener('click', () => {
 
 // формирование страницы клубов
 
-connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Clubs`, (err, rez) => {
-  if (err) {
-    console.log('damn');
-  } else {
-    kolvo = rez[0]['Kolvo'];
-    connection.query(`SELECT Clubs.Club_name, Clubs.Adress, Clubs.Description FROM Lovice.Clubs;`, (err, rez) => {
-      if (err) {
-        console.log('damn');
-      } else {
-        for (let i = 0; i < kolvo; i++) {
-          str = rez[i]['Club_name'];
-          let adres = rez[i]['Adress'];
-          let desc = rez[i]['Description'];
-          let card = document.createElement('div');
-          card.innerHTML = `<div id="club-${i}" class="club card"><span class="title">"${str}"</span><span class="adres">${adres}</span><div id="club-desc-${i}" class="descript hidden">${desc}</div><button class="card-but but">Туда!</button></div>`;
-          document.getElementById('clubs-list').appendChild(card);
-
+function clubsPageCreate() {
+  connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Clubs`, (err, rez) => {
+    if (err) {
+      console.log('damn');
+    } else {
+      kolvo = rez[0]['Kolvo'];
+      connection.query(`SELECT Clubs.Club_name, Clubs.Adress, Clubs.Description FROM Lovice.Clubs;`, (err, rez) => {
+        if (err) {
+          console.log('damn');
+        } else {
+          for (let i = 0; i < kolvo; i++) {
+            str = rez[i]['Club_name'];
+            let adres = rez[i]['Adress'];
+            let desc = rez[i]['Description'];
+            let card = document.createElement('div');
+            card.innerHTML = `<div id="club-${i}" class="club card"><span class="title">"${str}"</span><span class="adres">${adres}</span><div id="club-desc-${i}" class="descript hidden">${desc}</div></div>`;
+            document.getElementById('clubs-list').appendChild(card);
+  
+          }
+          for (let i = 0; i < kolvo; i++) {
+            document.getElementById(`club-${i}`).addEventListener('mouseover', () => {
+              document.getElementById(`club-desc-${i}`).classList.remove('hidden');
+              document.getElementById(`club-desc-${i}`).classList.add('visible');
+            })
+            document.getElementById(`club-${i}`).addEventListener('mouseout', () => {
+              document.getElementById(`club-desc-${i}`).classList.remove('visible');
+              document.getElementById(`club-desc-${i}`).classList.add('hidden');
+            })
+          }
         }
-        for (let i = 0; i < kolvo; i++) {
-          document.getElementById(`club-${i}`).addEventListener('mouseover', () => {
-            document.getElementById(`club-desc-${i}`).classList.remove('hidden');
-            document.getElementById(`club-desc-${i}`).classList.add('visible');
-            //document.getElementById(`service-desc-${i}`).classList.remove('close');
-          })
-          document.getElementById(`club-${i}`).addEventListener('mouseout', () => {
-            document.getElementById(`club-desc-${i}`).classList.remove('visible');
-            document.getElementById(`club-desc-${i}`).classList.add('hidden');
-            //document.getElementById(`service-desc-${i}`).classList.add('close');
-          })
-        }
-      }
-    })
-  }
-})
+      })
+    }
+  })
+}
 
 function editServices() {
+  let error = 0;
   let serviceName = document.getElementById('service-name-input').value;
+  if (serviceName === '') {
+    showMessage('error-servName', 'Название услуги не может быть пустым');
+    error++
+  }
   let serviceCost = document.getElementById('service-cost-input').value;
+  if (serviceCost.includes('[^0-9]') || serviceName === '') {
+    showMessage('error-cost', 'Цена не может быть пустой и не может включать в себя буквы');
+    error++
+  }
   let serviceDesc = document.getElementById('service-desc-input').value;
-  connection.query(`INSERT INTO Lovice.Services VALUES (NULL, '${serviceName}', '${serviceCost}', '${serviceDesc}');`, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      clearInputs();
-      showMessage('success-add-serv', 'Услуга успешно добавлена!');
-    }
-  });
+  if (serviceDesc === '') {
+    showMessage('error-descServ', 'Описание услуги должно быть введено обязательно!');
+    error++
+  }
+  if (error === 0) {
+    connection.query(`INSERT INTO Lovice.Services VALUES (NULL, '${serviceName}', '${serviceCost}', '${serviceDesc}');`, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        clearInputs();
+        showMessage('success-add-serv', 'Услуга успешно добавлена!');
+      }
+    });
+  }
+  
 }
 
 function editClubs() {
+  let errors = 0;
   let clubName = document.getElementById('club-name-input').value;
-  let clubCost = document.getElementById('club-address-input').value;
+  if (clubName === '') {
+    showMessage('error-clubName', 'Название заведения не может быть пустым');
+    errors++
+  }
+  let clubAdr = document.getElementById('club-address-input').value;
+  if (clubAdr === '') {
+    showMessage('error-clubAdr', 'Адрес не может быть пустым');
+    errors++
+  }
   let clubDesc = document.getElementById('club-desc-input').value;
-  connection.query(`INSERT INTO Lovice.Clubs VALUES (NULL, '${clubName}', '${clubCost}', '${clubDesc}');`, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      clearInputs();
-      showMessage('success-add-club', 'Заведение успешно добавлено!');
-    }
-  });
+  if (clubDesc === '') {
+    showMessage('error-clubDesc', 'Описание заведения должно быть введено обязательно!');
+    errors++
+  }
+  if (errors === 0) {
+    connection.query(`INSERT INTO Lovice.Clubs VALUES (NULL, '${clubName}', '${clubAdr}', '${clubDesc}');`, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        clearInputs();
+        showMessage('success-add-club', 'Заведение успешно добавлено!');
+      }
+    });
+  }
 }
+
+document.getElementById('to-profile-from-chc').addEventListener('click', () => {
+  clearInputs();
+  document.getElementById('change-clubs-page').classList.add('close');
+  document.getElementById('profile-page').classList.remove('close');
+})
+
+document.getElementById('to-profile-from-chs').addEventListener('click', () => {
+  clearInputs();
+  document.getElementById('change-services-page').classList.add('close');
+  document.getElementById('profile-page').classList.remove('close');
+})
 
 function showMessage(id, text) {
   let block = document.getElementById(id);
@@ -744,11 +851,13 @@ document.getElementById('change-clubs').addEventListener('click', () => {
 
 document.getElementById('view-services').addEventListener('click', () => {
   document.getElementById('service-page').classList.remove('close');
+  servicesPageCreate();
   document.getElementById('change-services-page').classList.add('close');
 })
 
 document.getElementById('view-clubs').addEventListener('click', () => {
   document.getElementById('clubs-page').classList.remove('close');
+  clubsPageCreate();
   document.getElementById('change-clubs-page').classList.add('close');
 })
 
@@ -771,11 +880,13 @@ document.getElementById('to-main-r').addEventListener('click', () => {
 
 document.getElementById('to-service').addEventListener('click', () => {
   document.getElementById('service-page').classList.remove('close');
+  servicesPageCreate();
   document.getElementById('profile-page').classList.add('close');
 })
 
 document.getElementById('to-main-s').addEventListener('click', () => {
   document.getElementById('service-page').classList.add('close');
+  deleteCatalog('service-list');
   document.getElementById('profile-page').classList.remove('close');
 })
 
@@ -796,11 +907,13 @@ document.getElementById('to-main-e').addEventListener('click', () => {
 
 document.getElementById('to-clubs').addEventListener('click', () => {
   document.getElementById('clubs-page').classList.remove('close');
+  clubsPageCreate();
   document.getElementById('profile-page').classList.add('close');
 })
 
 document.getElementById('to-main-c').addEventListener('click', () => {
   document.getElementById('clubs-page').classList.add('close');
+  deleteCatalog('clubs-list');
   document.getElementById('profile-page').classList.remove('close');
 })
 

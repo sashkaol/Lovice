@@ -3,4 +3,4 @@
 /*delete from Lovice.Clubs where Clubs.Club_name = "";*/
 -- INSERT INTO Lovice.Archive SELECT * FROM Lovice.Users WHERE Users.Log_in = 'olenevnik';
 -- SELECT * FROM Lovice.Archive
--- delete from Lovice.Archive WHERE Id = 15;
+delete from Lovice.Archive WHERE Id = 14;
