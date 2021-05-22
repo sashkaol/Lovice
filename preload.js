@@ -52,12 +52,16 @@ function humanDate(date) {
 
   // создание документа
 
+  var rubles = require('rubles').rubles;
+  const shell = require('electron').shell;
+  var path = require('path');
+
   async function createDoc(fileName, data, inputFileName) {
     var PizZip = require('pizzip');
     var Docxtemplater = require('docxtemplater');
 
     var fs = require('fs');
-    var path = require('path');
+    
 
       await new Promise((r,j)=>{
         fs.copyFile(
@@ -114,7 +118,8 @@ function humanDate(date) {
         Timme: data.timme,
         Letter: data.letter,
         DateCon: humanDate(new Date),
-        FinalCost: data.cost,
+        FinalCost: data.cost + ' руб.',
+        FinalCostString: rubles(data.cost),
         services: data.services,
       });
   
@@ -557,8 +562,12 @@ let id_2;
     }
     console.log(allData);
     if (errors === 0) {
-      createDoc('Приглашение.docx', allData, 'Lovice-invite.docx');
-    createDoc('Договор.docx', allData, 'Lovice-Contract.docx');
+      var d = new Date();
+      var theDate = [d.getFullYear(), d.getMonth()+1, d.getDate()].join('-')+'_'+[d.getHours(), d.getMinutes(), d.getSeconds()].join('-')+'.'+d.getMilliseconds()
+      let fileInvite = 'Invite-Lovice_' + theDate + '.docx';
+      let fileContract = 'Contract-Lovice_' + theDate + '.docx';
+      createDoc(fileInvite, allData, 'Lovice-invite.docx');
+    createDoc(fileContract, allData, 'Lovice-Contract.docx');
     showMessage('success-contract', 'Договор и приглашение успешно созданы! Переход в профиль совершится автоматически через несколько секунд...');
     console.log(`INSERT INTO Lovice.Contract VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost});`);
     connection.query(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost});`, (err, rez) => {
@@ -583,6 +592,8 @@ let id_2;
         el.checked = false;
       })
       id_2 = '';
+      shell.openPath(path.resolve(`contracts/${fileInvite}`));
+      shell.openPath(path.resolve(`contracts/${fileContract}`));
     }, 3000)
     }
   }
