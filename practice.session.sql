@@ -3,4 +3,7 @@
 /*delete from Lovice.Clubs where Clubs.Club_name = "";*/
 -- INSERT INTO Lovice.Archive SELECT * FROM Lovice.Users WHERE Users.Log_in = 'olenevnik';
 -- SELECT * FROM Lovice.Archive
-delete from Lovice.Archive WHERE Id = 14;
+-- delete from Lovice.Archive WHERE Id = 14;
+-- INSERT INTO Lovice.Contract VALUES (NULL, 15, 13, '2021-05-28', '15:10', 3, 2300);
+-- SELECT * FROM Lovice.Services_list;
+SELECT * FROM Lovice.Contracts;

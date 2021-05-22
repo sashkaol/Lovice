@@ -15,62 +15,125 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const bcrypt = require('bcrypt');
 
+function getDate(date){
+  if(date instanceof Date) {
+    return {
+      day: date.getDate(),
+      month: date.getMonth(),
+      //monthName: months[date.getMonth()],
+      year: date.getFullYear(),
+      date: date
+    };
+  }else if(date === null || date === void 0){
+    return null;
+  }else{
+    return date;
+  }
+}
+const months = [
+  'января',
+  'февраля',
+  'марта',
+  'апреля',
+  'мая',
+  'июня',
+  'июля',
+  'августа',
+  'сентября',
+  'октября',
+  'ноября',
+  'декабря'
+];
+
+function humanDate(date) {
+  let d = getDate(date);
+  return [d.day, months[d.month], d.year].join(' ');
+}
+
   // создание документа
 
-  function createDoc(fileName, data) {
+  async function createDoc(fileName, data, inputFileName) {
     var PizZip = require('pizzip');
     var Docxtemplater = require('docxtemplater');
 
     var fs = require('fs');
     var path = require('path');
 
-    function replaceErrors(key, value) {
-      if (value instanceof Error) {
-        return Object.getOwnPropertyNames(value).reduce(function (error, key) {
-          error[key] = value[key];
-          return error;
-        }, {});
+      await new Promise((r,j)=>{
+        fs.copyFile(
+          'patterns/'+inputFileName,
+          `contracts/${fileName}`, 
+          (err, data)=>(
+            (err?j:r)(data)
+          )
+        );
+        
+      });
+      console.log('File copied');
+
+      console.log(data);
+
+      function replaceErrors(key, value) {
+        if (value instanceof Error) {
+          return Object.getOwnPropertyNames(value).reduce(function (error, key) {
+            error[key] = value[key];
+            return error;
+          }, {});
+        }
+        return value;
       }
-      return value;
-    }
-
-    function errorHandler(error) {
-      console.log(JSON.stringify({ error: error }, replaceErrors));
-
-      if (error.properties && error.properties.errors instanceof Array) {
-        const errorMessages = error.properties.errors.map(function (error) {
-          return error.properties.explanation;
-        }).join("\n");
-        console.log('errorMessages', errorMessages);
+  
+      function errorHandler(error) {
+        console.log(JSON.stringify({ error: error }, replaceErrors));
+  
+        if (error.properties && error.properties.errors instanceof Array) {
+          const errorMessages = error.properties.errors.map(function (error) {
+            return error.properties.explanation;
+          }).join("\n");
+          console.log('errorMessages', errorMessages);
+        }
+        throw error;
       }
-      throw error;
-    }
-    var content = fs
-      .readFileSync(path.resolve(__dirname, `${fileName}.docx`), 'binary');
+  
+      var content = fs
+        .readFileSync(path.resolve(`contracts/${fileName}`), 'binary');
+  
+      var zip = new PizZip(content);
+      var doc;
+  
+      try {
+        doc = new Docxtemplater(zip);
+      } catch (error) {
+        errorHandler(error);
+      }
+      doc.setData({
+        SecondPersonFullName: data.person_2['fullName'],
+        FirstPersonFullName: data.person_1['fullName'],
+        Place: data.club['clubName'],
+        Datte: data.datte,
+        Timme: data.timme,
+        Letter: data.letter,
+        DateCon: humanDate(new Date),
+        FinalCost: data.cost,
+        services: data.services,
+      });
+  
+      try {
+        doc.render()
 
-    var zip = new PizZip(content);
-    var doc;
-    try {
-      doc = new Docxtemplater(zip);
-    } catch (error) {
-      errorHandler(error);
-    }
+        var buf = doc.getZip()
+        .generate({ type: 'nodebuffer' });
+  
+      fs.writeFileSync(path.resolve(`contracts/${fileName}`), buf);
 
-    doc.setData(data);
 
-    try {
-      doc.render()
-    }
-    catch (error) {
-      errorHandler(error);
-    }
-
-    var buf = doc.getZip()
-      .generate({ type: 'nodebuffer' });
-
-    fs.writeFileSync(path.resolve(__dirname, `${fileName}.docx`), buf);
-
-  }
+      }
+      catch (error) {
+        errorHandler(error);
+      }
+  
+     
+}
 
 // подключение MySql
 
@@ -189,7 +252,7 @@ var this_login = '';
 var this_password = '';
 var this_salt = '';
 var user_password = '';
-var id_user = '';
+var id_user;
 var inputs = document.querySelectorAll('input:not([type=checkbox]):not([type=radio])');
 var textareas = document.querySelectorAll('textarea');
 
@@ -357,10 +420,10 @@ function ageCalc(user_age) {
     return user_age + ' года';
   }
 }
-
-//
+let id_2;
 
   function renderCatalog() {
+    deleteCatalog('catalog-page-cards');
     connection.query(`SELECT COUNT (*) AS 'Kol_vo' FROM Lovice.Users WHERE Users.Level <> 'admin' AND Users.Log_in <> '${this_login}';`, (err, rez) => {
       if (err) {
         console.log(err);
@@ -375,10 +438,11 @@ function ageCalc(user_age) {
               user_age = rez[i]['Age'];
               user_about = rez[i]['About_me'];
               let catalog_card = document.createElement('div');
-              catalog_card.innerHTML = `<div id="user-${i}" class="catalog-card"><div class="user-info">${user_name}</div><div class="user-info">${ageCalc(user_age)}</div><div class="user-info big">${user_about}</div><div class="user-buts"><button id='to-contract-${i}' class="user-but like"><img class="likes" src="img/facebook-like.png"></div></div>`;
+              catalog_card.innerHTML = `<div id="user-${i}" class="catalog-card"><div id="user-name-${i}" class="user-info">${user_name}</div><div class="user-info">${ageCalc(user_age)}</div><div class="user-info big">${user_about}</div><div class="user-buts"><button id='to-contract-${i}' class="user-but like"><img class="likes" src="img/facebook-like.png"></div></div>`;
               document.getElementById("catalog-page-cards").appendChild(catalog_card);
               document.getElementById(`to-contract-${i}`).addEventListener('click', () => {
-                createContract(rez[i]['Id'], `user-${i}`);
+                createContract(rez[i]['Id'], `user-name-${i}`);
+                id_2 = rez[i]['Id'];
               })
             }
           }
@@ -387,28 +451,153 @@ function ageCalc(user_age) {
     })
   }
 
+  document.getElementById('cancel-contract-but').addEventListener('click', () => {
+    clearInputs();
+    id_2 = '';
+    document.getElementById('create-contract-page').classList.add('close');
+    document.getElementById('profile-page').classList.remove('close');
+  })
+
+  let secondPers = '';
+
   function createContract(id, person) {
     console.log(id, person);
     document.getElementById('this-user-name').innerHTML = `${thisUserName}`;
-    let pers = document.getElementById(person);
-    document.getElementById('person__wrapp').appendChild(pers);
+    secondPers = document.getElementById(person).textContent;
+    document.getElementById('person').innerHTML = secondPers;
     document.getElementById('create-contract-page').classList.remove('close');
     document.getElementById('catalog-page').classList.add('close');
     openServiceList();
     openClubList();
   }
 
+  let allData =
+      {
+        person_1: {
+          id: '',
+          fullName: ''
+        },
+        person_2: {
+          id: '',
+          fullName: ''
+        },
+        datte: '',
+        timme: '',
+        club: {
+          id: '',
+          clubName: '',
+        },
+        services: [],
+        cost: 0,
+        letter: '',
+      }
+
+  document.getElementById('create-contract-but').addEventListener('click', getDataForContracts);
+
+  function getDataForContracts() {
+    let errors = 0;
+    allData.person_1['id'] = id_user;
+    allData.person_1['fullName'] = thisUserName;
+    allData.person_2['fullName'] = secondPers;
+    allData.person_2['id'] = id_2;
+    let clubs = document.getElementsByName('club');
+    for (let i = 0; i < clubs.length; i++) {
+      if (clubs[i].checked) {
+        allData.club['id'] = clubs[i].value;
+        allData.club['clubName'] = clubs[i].getAttribute('data-clubName');
+      break;
+      }
+    }
+    if (allData.club['id'] === '' || allData.club['id'] == undefined) {
+      showMessage('error-club-contract', 'Выберите место!');
+      errors++
+    }
+    let services = document.getElementsByName('services');
+    let num = 1;
+    for (let i = 0; i < services.length; i++) {
+      let servicesList = {
+        id: '',
+        servName: '',
+        cost: 0,
+        i: num
+      }
+      if (services[i].checked) {
+        servicesList.id = services[i].value;
+        servicesList.servName = services[i].getAttribute('data-servName');
+        servicesList.cost = services[i].getAttribute('data-cost');
+        
+        allData.services.push(servicesList);
+
+        allData.cost += parseFloat(services[i].getAttribute('data-cost'));
+        num++
+      }
+    }
+    if (allData.services == '' || allData.services == undefined) {
+      showMessage('error-serv-contract', 'Выберите хотя бы одну услугу!');
+      errors++
+    }
+    document.getElementById('all-cost').innerHTML = allData.cost + ' руб.';
+    allData.timme = document.getElementById('time-meet').value;
+    if (allData.timme === '' || allData.timme == undefined) {
+      showMessage('error-timme', 'Укажите время!');
+      errors++
+    }
+    allData.datte = document.getElementById('date-meet').value;
+    if (allData.datte === '' || allData.datte == undefined) {
+      showMessage('error-datte', 'Укажите дату!');
+      errors++
+    } else if (new Date(allData.datte) < new Date()) {
+      showMessage('error-datte', 'В целях сохранения временной линии свидания в прошлом запрещены Теневой Прокламацией');
+      errors++
+    }
+    allData.letter = document.getElementById('letter').value;
+    if (allData.letter === '') {
+      showMessage('error-letter', 'Отправьте сообщение пользователю!');
+      errors++
+    }
+    console.log(allData);
+    if (errors === 0) {
+      createDoc('Приглашение.docx', allData, 'Lovice-invite.docx');
+    createDoc('Договор.docx', allData, 'Lovice-Contract.docx');
+    showMessage('success-contract', 'Договор и приглашение успешно созданы! Переход в профиль совершится автоматически через несколько секунд...');
+    console.log(`INSERT INTO Lovice.Contract VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost});`);
+    connection.query(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost});`, (err, rez) => {
+      if (!err) {
+        console.info(rez);
+        debugger
+        allData.services.forEach(function(service){
+          connection.query(`INSERT INTO Lovice.Services_list (Id_contract, Id_service) VALUES (?,?)`, [rez.insertId, service.id])
+        })
+        
+      }
+    })
+    setTimeout(() => {
+      document.getElementById('profile-page').classList.remove('close');
+      document.getElementById('create-contract-page').classList.add('close');
+      clearInputs();
+      document.getElementById('all-cost').innerHTML = '';
+      clubs.forEach(el => {
+        el.checked = false;
+      })
+      services.forEach(el => {
+        el.checked = false;
+      })
+      id_2 = '';
+    }, 3000)
+    }
+  }
+
   function openServiceList() {
     connection.query(`SELECT COUNT (*) AS 'KOLVO' FROM Lovice.Services;`, (err, rez) => {
       let kolvo = rez[0]['KOLVO'];
-      connection.query(`SELECT Services.ServiceName, Services.Description, Services.Cost FROM Lovice.Services;`, (err, rez) => {
+      connection.query(`SELECT Services.Id, Services.ServiceName, Services.Description, Services.Cost FROM Lovice.Services;`, (err, rez) => {
         for (let i = 0; i < kolvo; i++) {
           let serviceItem = document.createElement('div');
           serviceItem.innerHTML = `<div class="item">
             <div class="name-form">${rez[i]['ServiceName']}</div>
             <div class="desc-form">${rez[i]['Description']}</div>
             <div>${rez[i]['Cost']} руб.</div>
-            <button class="but add-serv">&#10004;</button>
+            <input type="checkbox" name="services" value="${rez[i]['Id']}" class="but radio-club" data-cost="${rez[i]['Cost']}" data-servName="${rez[i]['ServiceName']}"></input>
           </div>`
           document.getElementById('services-for-contract').appendChild(serviceItem);
         }
@@ -419,15 +608,16 @@ function ageCalc(user_age) {
   function openClubList() {
     connection.query(`SELECT COUNT (*) AS 'KOLVO' FROM Lovice.Clubs;`, (err, rez) => {
       let kolvo = rez[0]['KOLVO'];
-      connection.query(`SELECT Clubs.Club_name, Clubs.Description, Clubs.Adress FROM Lovice.Clubs;`, (err, rez) => {
+      connection.query(`SELECT Clubs.Id, Clubs.Club_name, Clubs.Description, Clubs.Adress FROM Lovice.Clubs;`, (err, rez) => {
         for (let i = 0; i < kolvo; i++) {
           let serviceItem = document.createElement('div');
           serviceItem.innerHTML = `<div class="item">
             <div class="name-form">${rez[i]['Club_name']}</div>
             <div class="desc-form">${rez[i]['Description']}</div>
             <div class="adres-form">${rez[i]['Adress']}</div>
-            <button class="but add-serv">&#10004;</button>
-          </div>`
+            <div class="radio-input-wrap">
+            <input value="${rez[i]['Id']}" type="radio" name="club" data-clubName="${rez[i]['Club_name']}" class="radio-club but add-serv" id="add-club-${i}"></input></div>
+          </div>`;
           document.getElementById('club-for-contract').appendChild(serviceItem);
         }
       })
@@ -831,10 +1021,9 @@ function showMessage(id, text) {
   }, 3000);
 }
 
-document.getElementById('to-pofile-from-catalog').addEventListener('click', () => {
+document.getElementById('to-profile-from-catalog').addEventListener('click', () => {
   document.getElementById('catalog-page').classList.add('close');
   document.getElementById('profile-page').classList.remove('close');
-  deleteCatalog('catalog-page-cards');
 })
 
 document.getElementById('add-service').addEventListener('click', editServices);

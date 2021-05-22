@@ -258,7 +258,19 @@
     transition: ease-out 0.4s;
     box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
 }
+.radio-input-wrap:hover {
+    box-shadow: 0 13px 40px 0 #D1878A, 0 13px 40px 5px #fff, 0 3px 5px 0 #D1878A;
+    transition: ease-out 0.4s;
+}
+.radio-input-wrap {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    overflow: hidden;
+    border-radius: 33px;
+    transition: ease-out 0.4s;
 
+}
 .close {
     display: none !important;
 }
@@ -429,6 +441,7 @@
     min-height: 54px;
     padding: 15px;
     box-sizing: border-box;
+    text-align: center;
 }
 
 .tools-close {
@@ -549,6 +562,12 @@
     padding: 20px;
     box-sizing: border-box;
     min-height: 120px;
+}
+
+.radio-club {
+    width: 25px;
+    height: 25px;
+
 }
 
 .search-l {
@@ -708,7 +727,7 @@
 }
 
 .adres-form {
-    width: 75px;
+    width: 175px;
 }
 
 .add-serv {
@@ -724,10 +743,20 @@
     align-items: baseline;
     gap: 10px;
     border-radius: 30px;
-    height: 100px;
+    min-height: 100px;
     background-color: #F7EEED;
     padding: 15px;
     box-sizing: border-box;
+}
+
+.contracts-but {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.contract-but {
+    width: 45%;
 }
 
 .for-message {
@@ -735,9 +764,10 @@
     ;
     color:rgb(97, 73, 74);
     border-radius: 30px;
-    height: 54px;
+    min-height: 54px;
     width: 100%;
-    padding: 20px;
+    padding: 15px;
+    text-align: center;
     box-sizing: border-box;
     font-size: 24px;
     font-family: "font";

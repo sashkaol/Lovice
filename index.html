@@ -109,7 +109,7 @@
   </div>
   <div id="catalog-page" class="catalog-page page close">
     <div id="catalog-page-cards" class="catalog-page-cards"></div>
-    <button id="to-pofile-from-catalog" class="but">В профиль</button>
+    <button id="to-profile-from-catalog" class="but">В профиль</button>
     
   </div>
   <div id="all-users" class="all-users-catalog page close">
@@ -118,9 +118,6 @@
     </div>
     <span class="labels adm-l">Пользователи</span>
     <div id="user-pages" class="users-pages">
-    </div>
-    <span class="labels adm-l">Архив пользователей</span>
-    <div id="archive-pages" class="archive-pages">
     </div>
     <button id="to-profile-from-alls" class="but">В профиль</button>
   </div>
@@ -211,16 +208,29 @@
       <div class="labels">Вы</div>
       <div id="this-user-name" class="inputs"></div>
       <div class="labels">Выбранный пользователь</div>
-      <div id="person">
-        <div id="person__wrapp" class="person__wrapp">
-
-        </div>
-      </div>
+      <div class="inputs" id="person"></div>
       <div class="labels">Выбранное заведение</div>
       <div id="club-for-contract" class="inputs list"></div>
+      <div id="error-club-contract" class="for-error-message close"></div>
       <div class="labels">Выбранные услуги</div>
       <div id="services-for-contract" class="inputs list"></div>
-      <button id="create-contract-but" class="but">Завершить оформление</button>
+      <div id="error-serv-contract" class="for-error-message close"></div>
+      <div class="labels">Время встречи</div>
+      <input class="inputs" type="time" name="" id="time-meet" />
+      <div id="error-timme" class="for-error-message close"></div>
+      <div class="labels">Дата встречи</div>
+      <input class="inputs" type="date" name="" id="date-meet" />
+      <div id="error-datte" class="for-error-message close"></div>
+      <div class="labels">Сообщение пользователю</div>
+      <textarea class="inputs about" name="" id="letter" cols="30" rows="10" maxlength="400" placeholder="Напишите сообщение вашему спутнику!"></textarea>
+      <div id="error-letter" class="for-error-message close"></div>
+      <div class="labels">Итого:</div>
+      <div id="all-cost" class="inputs"></div>
+      <div class="contracts-but">
+        <button id="cancel-contract-but" class="but contract-but">Отменить оформление</button>
+        <button id="create-contract-but" class="but contract-but">Оформить документ</button>
+      </div>
+      <div id="success-contract" class="for-message close"></div>
     </div>
   </div>
  
