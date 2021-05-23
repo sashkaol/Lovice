@@ -57,7 +57,6 @@ function humanDate(date) {
   // создание документа, подключение модуля для написания цифр прописью, открытие документа
 
   var rubles = require('rubles').rubles;
-  const shell = require('electron').shell;
   var path = require('path');
 
   async function createDoc(fileName, data, inputFileName) {
@@ -495,9 +494,12 @@ let id_2;
     openClubList();
   }
 
-  // объект для всех необходимых данных при создании договора
+  // объект для всех необходимых данных при создании договора      
 
-  let allData =
+  document.getElementById('create-contract-but').addEventListener('click', getDataForContracts); // клац и получили данные да еще и создали документ
+
+  function getDataForContracts() {
+    let allData =
       {
         date_con: '',
         person_1: {
@@ -518,11 +520,7 @@ let id_2;
         cost: 0,
         letter: '',
       }
-      
-
-  document.getElementById('create-contract-but').addEventListener('click', getDataForContracts); // клац и получили данные да еще и создали документ
-
-  function getDataForContracts() {
+  
     let errors = 0;
     allData.person_1['id'] = id_user;
     allData.person_1['fullName'] = thisUserName;
@@ -622,29 +620,6 @@ let id_2;
         el.checked = false;
       })
       id_2 = '';
-      // shell.openPath(path.resolve(`contracts/${fileInvite}`));
-      // shell.openPath(path.resolve(`contracts/${fileContract}`));
-      allData =
-      {
-        date_con: '',
-        person_1: {
-          id: '',
-          fullName: ''
-        },
-        person_2: {
-          id: '',
-          fullName: ''
-        },
-        datte: '',
-        timme: '',
-        club: {
-          id: '',
-          clubName: '',
-        },
-        services: [],
-        cost: 0,
-        letter: '',
-      }
     }, 3000)
   } else allData.services = [];
 }
