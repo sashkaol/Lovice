@@ -121,7 +121,7 @@ function humanDate(date) {
         Datte: data.datte,
         Timme: data.timme,
         Letter: data.letter,
-        DateCon: humanDate(new Date),
+        DateCon: data.date_con,
         FinalCost: data.cost + ' руб.',
         FinalCostString: rubles(data.cost),
         services: data.services,
@@ -224,8 +224,8 @@ document.getElementById('registrate').addEventListener('click', () => {
     errors++
   } 
   let password = document.getElementById('password').value;
-  if (password.length < 10 || password.includes('0-9') == false) {
-    showMessage('error-enter-pass', 'Пароль ненадежен: он должен быть длиной более 10 символов и включать в себя цифры');
+  if (password.length < 10) {
+    showMessage('error-enter-pass', 'Пароль ненадежен: он должен быть длиной более 10 символов');
     errors++
   } 
   let salt = bcrypt.genSaltSync(1);
@@ -499,6 +499,7 @@ let id_2;
 
   let allData =
       {
+        date_con: '',
         person_1: {
           id: '',
           fullName: ''
@@ -517,6 +518,7 @@ let id_2;
         cost: 0,
         letter: '',
       }
+      
 
   document.getElementById('create-contract-but').addEventListener('click', getDataForContracts); // клац и получили данные да еще и создали документ
 
@@ -581,20 +583,27 @@ let id_2;
       showMessage('error-letter', 'Отправьте сообщение пользователю!');
       errors++
     }
+    allData.date_con = humanDate(new Date());
     console.log(allData);
     if (errors === 0) {
       var d = new Date();
       var theDate = [d.getFullYear(), d.getMonth()+1, d.getDate()].join('-')+'_'+[d.getHours(), d.getMinutes(), d.getSeconds()].join('-')+'.'+d.getMilliseconds()
+      
+
       let fileInvite = 'Invite-Lovice_' + theDate + '.docx';
       let fileContract = 'Contract-Lovice_' + theDate + '.docx';
-      createDoc(fileInvite, allData, 'Lovice-invite.docx');
+    createDoc(fileInvite, allData, 'Lovice-invite.docx');
     createDoc(fileContract, allData, 'Lovice-Contract.docx');
     showMessage('success-contract', 'Договор и приглашение успешно созданы! Переход в профиль совершится автоматически через несколько секунд...');
-    console.log(`INSERT INTO Lovice.Contract VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost});`);
-    connection.query(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost});`, (err, rez) => {
+    let now = new Date();
+    var theDate = [now.getFullYear(), now.getMonth()+1, now.getDate()].join('-');
+    console.log(theDate);
+    console.log(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.datte}', ${allData.club['id']}, ${allData.cost}, ${new Date()});`);
+    connection.query(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost}, '${theDate}');`, (err, rez) => {
+      if (err) console.log(err) 
+      else
       if (!err) {
         console.info(rez);
-        debugger
         allData.services.forEach(function(service){
           connection.query(`INSERT INTO Lovice.Services_list (Id_contract, Id_service) VALUES (?,?)`, [rez.insertId, service.id])
         })
@@ -613,11 +622,129 @@ let id_2;
         el.checked = false;
       })
       id_2 = '';
-      shell.openPath(path.resolve(`contracts/${fileInvite}`));
-      shell.openPath(path.resolve(`contracts/${fileContract}`));
+      // shell.openPath(path.resolve(`contracts/${fileInvite}`));
+      // shell.openPath(path.resolve(`contracts/${fileContract}`));
+      allData =
+      {
+        date_con: '',
+        person_1: {
+          id: '',
+          fullName: ''
+        },
+        person_2: {
+          id: '',
+          fullName: ''
+        },
+        datte: '',
+        timme: '',
+        club: {
+          id: '',
+          clubName: '',
+        },
+        services: [],
+        cost: 0,
+        letter: '',
+      }
     }, 3000)
-    }
+  } else allData.services = [];
+}
+
+  document.getElementById('to-profile-from-docx').addEventListener('click', () => {
+    document.getElementById('my-docx').classList.add('close');
+    document.getElementById('profile-page').classList.remove('close');
+  })
+
+  document.getElementById('to-docx').addEventListener('click', () => {
+    deleteCatalog('my-docx-list');
+    document.getElementById('my-docx').classList.remove('close');
+    document.getElementById('profile-page').classList.add('close');
+    connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Contracts WHERE Contracts.Person_1 = ${id_user};`, (err, rez) => {
+      let kolvo = rez[0]['Kolvo'];
+      connection.query(`SELECT * FROM Lovice.Contracts WHERE Contracts.Person_1 = ${id_user};`, (err, rez) => {
+        for (let i = 0; i < kolvo; i++) {
+          let contractItem = document.createElement('div');
+          contractItem.innerHTML = `<div class="item">
+          <div class="labels">Договор ${rez[i]['Id']}</div>
+          <div class="labels"> от ${humanDate(rez[i]['Date_con'])}</div>
+          <div class="labels"> на сумму ${rez[i]['Cost']} руб.</div>
+          <button id="save-contract-num-${rez[i]['Id']}" class="user-but like">Сохранить документ</button>
+          </div>`
+          document.getElementById('my-docx-list').appendChild(contractItem);
+          document.getElementById(`save-contract-num-${rez[i]['Id']}`).addEventListener('click', () => {
+            createOldDocx(rez[i]['Id']);
+          })
+        }
+      })
+    })
+  })
+
+  function createOldDocx(id) {
+    var allData = {
+      date_con: '',
+        person_1: {
+          id: '',
+          fullName: ''
+        },
+        person_2: {
+          id: '',
+          fullName: ''
+        },
+        datte: '',
+        timme: '',
+        club: {
+          id: '',
+          clubName: '',
+        },
+        services: [],
+        cost: 0,
+        letter: '',
+    };
+    connection.query(`SELECT * FROM Lovice.Contracts WHERE Contracts.Id = ${id};`, (err, rez) => {
+      allData.cost = rez[0]['Cost'];
+      connection.query(`SELECT Users.Full_Name FROM Lovice.Users, Lovice.Contracts WHERE Users.Id = Contracts.Person_1 AND Contracts.Id = ${id};`, (err, rez) => {
+        allData.person_1['fullName'] = rez[0]['Full_Name'];
+      })
+      connection.query(`SELECT Users.Full_Name FROM Lovice.Users, Lovice.Contracts WHERE Users.Id = Contracts.Person_2 AND Contracts.Id = ${id};`, (err, rez) => {
+        allData.person_2['fullName'] = rez[0]['Full_Name'];
+      })
+      allData.date_con = humanDate(rez[0]['Date_con']);
+      allData.timme = rez[0]['Timme'];
+      allData.datte = rez[0]['Datte'];
+      connection.query(`SELECT Clubs.Club_name FROM Lovice.Clubs, Lovice.Contracts WHERE Clubs.Id = Contracts.Club AND Contracts.Id = ${id}`, (err, rez) => {
+        allData.club['clubName'] = rez[0]['Club_name'];
+      })
+      connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Services_list WHERE Services_list.Id_contract = ${id};`, (err, rez) => {
+        let kolvo = rez[0]['Kolvo'];
+        let num = 1;
+        connection.query(`SELECT Services.ServiceName, Services.Cost FROM Lovice.Services, Lovice.Services_list, Lovice.Contracts WHERE Services_list.Id_service = Services.Id AND Contracts.Id = Services_list.Id_contract AND Contracts.Id = ${id};`, (err, rez) => {
+          for (let i = 0; i < kolvo; i++) {
+            let servicesList = {
+              servName: '',
+              cost: 0,
+              i: num
+            }
+            servicesList.servName = rez[i]['ServiceName'];
+            servicesList.cost = rez[i]['Cost'];
+            allData.services.push(servicesList);
+            num++
+          }
+        })
+      })
+    })
+    console.log(allData);
+    var d = new Date();
+      var theDate = [d.getFullYear(), d.getMonth()+1, d.getDate()].join('-')+'_'+[d.getHours(), d.getMinutes(), d.getSeconds()].join('-')+'.'+d.getMilliseconds()
+      let fileContract = 'Contract-Lovice_' + theDate + '.docx';  
+    showMessage('success-create-old', 'Ваш старый договор успешно сохранен на ваш компьютер!');
+    setTimeout( ()=> {
+      createDoc(fileContract, allData, 'Lovice-Contract.docx');
+
+
+      document.getElementById('my-docx').classList.add('close');
+      document.getElementById('profile-page').classList.remove('close');
+    }, 3000)
   }
+
 
   // список услуг красивенький и список заведений, тоже красивенький
 
@@ -744,7 +871,6 @@ function makeAdmin(id) {
   connection.query(`UPDATE Lovice.Users SET Users.Level = 'admin' WHERE Users.Id = '${id}';`);
   deleteCatalog('admin-pages');
   deleteCatalog('user-pages');
-  deleteCatalog('archive-pages');
   openCatalogForAdmins();
 }
 
@@ -752,7 +878,6 @@ function makeUser(id) {
   connection.query(`UPDATE Lovice.Users SET Users.Level = 'user' WHERE Users.Id = '${id}';`);
   deleteCatalog('admin-pages');
   deleteCatalog('user-pages');
-  deleteCatalog('archive-pages');
   openCatalogForAdmins();
 }
 

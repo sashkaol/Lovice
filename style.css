@@ -17,6 +17,11 @@
     height: 44px;
 }
 
+.success-con {
+    width: 675px !important;
+    margin-top: 20px;
+}
+
 .icon {
     height: 62.8px;
 }
@@ -654,7 +659,7 @@
     flex-direction: column;
     gap: 10px;
     box-sizing: border-box;
-    min-width: none;
+    max-width: 50%;
 }
 
 .profile-photo {
