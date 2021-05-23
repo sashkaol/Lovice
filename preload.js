@@ -597,7 +597,7 @@ let id_2;
     var theDate = [now.getFullYear(), now.getMonth()+1, now.getDate()].join('-');
     console.log(theDate);
     console.log(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.datte}', ${allData.club['id']}, ${allData.cost}, ${new Date()});`);
-    connection.query(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost}, '${theDate}');`, (err, rez) => {
+    connection.query(`INSERT INTO Lovice.Contracts VALUES (NULL, ${allData.person_1['id']}, ${allData.person_2['id']}, '${allData.datte}', '${allData.timme}', ${allData.club['id']}, ${allData.cost}, '${theDate}', '${allData.letter}');`, (err, rez) => {
       if (err) console.log(err) 
       else
       if (!err) {
@@ -684,10 +684,13 @@ let id_2;
       })
       allData.date_con = humanDate(rez[0]['Date_con']);
       allData.timme = rez[0]['Timme'];
-      allData.datte = rez[0]['Datte'];
+      let d = rez[0]['Datte'];
+      var theDate = [d.getFullYear(), d.getMonth()+1, d.getDate()].join('-');
+      allData.datte = theDate;
       connection.query(`SELECT Clubs.Club_name FROM Lovice.Clubs, Lovice.Contracts WHERE Clubs.Id = Contracts.Club AND Contracts.Id = ${id}`, (err, rez) => {
         allData.club['clubName'] = rez[0]['Club_name'];
       })
+      allData.letter = rez[0]['Letter'];
       connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Services_list WHERE Services_list.Id_contract = ${id};`, (err, rez) => {
         let kolvo = rez[0]['Kolvo'];
         let num = 1;
@@ -708,13 +711,13 @@ let id_2;
     })
     console.log(allData);
     var d = new Date();
-      var theDate = [d.getFullYear(), d.getMonth()+1, d.getDate()].join('-')+'_'+[d.getHours(), d.getMinutes(), d.getSeconds()].join('-')+'.'+d.getMilliseconds()
+      var theDate = [d.getFullYear(), d.getMonth()+1, d.getDate()].join('-')+'_'+[d.getHours(), d.getMinutes(), d.getSeconds()].join('-')+'.'+d.getMilliseconds();
+      let fileInvite = 'Invite-Lovice_' + theDate + '.docx';
       let fileContract = 'Contract-Lovice_' + theDate + '.docx';  
     showMessage('success-create-old', 'Ваш старый договор успешно сохранен на ваш компьютер!');
     setTimeout( ()=> {
       createDoc(fileContract, allData, 'Lovice-Contract.docx');
-
-
+      createDoc(fileInvite, allData, 'Lovice-invite.docx');
       document.getElementById('my-docx').classList.add('close');
       document.getElementById('profile-page').classList.remove('close');
     }, 3000)
