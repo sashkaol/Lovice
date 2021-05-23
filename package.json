@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "Lovice",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Social network",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -14,10 +14,11 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
+  "author": "Sasha Dubilo",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^12.0.2"
+    "electron": "^12.0.2",
+    "electron-packager": "^15.2.0"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

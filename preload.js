@@ -10,17 +10,21 @@ window.addEventListener('DOMContentLoaded', () => {
     replaceText(`${type}-version`, process.versions[type])
   }
 
+  // закрытие окна
 
   document.getElementById('exit').addEventListener('click', window.close);
+  
+  // подключение модуля хеширования паролей
 
-const bcrypt = require('bcrypt');
+  const bcrypt = require('bcrypt');
+
+  // тут красиво пишется дата
 
 function getDate(date){
   if(date instanceof Date) {
     return {
       day: date.getDate(),
       month: date.getMonth(),
-      //monthName: months[date.getMonth()],
       year: date.getFullYear(),
       date: date
     };
@@ -50,7 +54,7 @@ function humanDate(date) {
   return [d.day, months[d.month], d.year].join(' ');
 }
 
-  // создание документа
+  // создание документа, подключение модуля для написания цифр прописью, открытие документа
 
   var rubles = require('rubles').rubles;
   const shell = require('electron').shell;
@@ -235,8 +239,6 @@ document.getElementById('registrate').addEventListener('click', () => {
     errors++
   }
 
-  console.log(errors);
-
     if (errors <= 0) {
       let query = '';
       query = `INSERT INTO Lovice.Users VALUES (NULL, '${login}', '${password}', '${salt}', '${name}', '${email}', '${phone}', '${birthday}', '${pol}', '${about}', 'user', NULL);`;
@@ -251,7 +253,7 @@ document.getElementById('registrate').addEventListener('click', () => {
     }
 })
 
-// вход в систему
+// описание каких-то глобальных переменных, которые потом понадобятся (должны)
 
 var this_login = '';
 var this_password = '';
@@ -260,6 +262,8 @@ var user_password = '';
 var id_user;
 var inputs = document.querySelectorAll('input:not([type=checkbox]):not([type=radio])');
 var textareas = document.querySelectorAll('textarea');
+
+// чистка инпутов 
 
 function clearInputs() {
   inputs.forEach(el => {
@@ -270,7 +274,9 @@ function clearInputs() {
   })
 }
 
-let thisUserName;
+let thisUserName; // очень важная переменная, хранящая текущее имя
+
+// открытие профиля вошедшего пользователя
 
 function openUserProfile() {
   document.getElementById('hello-page').classList.add('close');
@@ -305,6 +311,8 @@ function openUserProfile() {
   
 }
 
+// выход из профиля
+
 function exitFromProfile() {
   document.getElementById('profile-text').innerHTML = '';
   document.getElementById('profile-photo').innerHTML = ''; 
@@ -326,9 +334,11 @@ function exitFromProfile() {
   document.getElementById('enter').addEventListener('click', enterWithLogin);
 }
 
-document.getElementById('exit-profile-admin').addEventListener('click', exitFromProfile);
+document.getElementById('exit-profile-admin').addEventListener('click', exitFromProfile); // клац
 
-document.getElementById('exit-profile-user').addEventListener('click', exitFromProfile);
+document.getElementById('exit-profile-user').addEventListener('click', exitFromProfile); // клац-клац
+
+// автоматический вход
 
 function automaticEnter(){
   connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.User_online = 'online';`, (err, rez) => {
@@ -358,11 +368,15 @@ function automaticEnter(){
   })
 }
 
-window.addEventListener('DOMContentLoaded', automaticEnter());
+window.addEventListener('DOMContentLoaded', automaticEnter()); // загрузка профиля при открытии окна
+
+// проверка последнего пользователя
 
 function setOnline() {
   connection.query(`UPDATE Lovice.Users SET Users.User_online = 'online' WHERE Users.Log_in = '${this_login}';`);
 }
+
+// вход с паролем
 
 function enterWithLogin() {
   document.getElementById('error-enter').classList.add('close');
@@ -408,9 +422,7 @@ function enterWithLogin() {
   })
 }
 
-console.log(this_login);
-
-var user_age;
+var user_age; // очень нужные переменные
 var user_name;
 var user_about;
 
@@ -425,7 +437,10 @@ function ageCalc(user_age) {
     return user_age + ' года';
   }
 }
+
 let id_2;
+
+  // открытие каталога пользователей
 
   function renderCatalog() {
     deleteCatalog('catalog-page-cards');
@@ -456,6 +471,8 @@ let id_2;
     })
   }
 
+  // отмена заключения договора
+
   document.getElementById('cancel-contract-but').addEventListener('click', () => {
     clearInputs();
     id_2 = '';
@@ -464,6 +481,8 @@ let id_2;
   })
 
   let secondPers = '';
+
+  // открытие страницы заключения договора
 
   function createContract(id, person) {
     console.log(id, person);
@@ -475,6 +494,8 @@ let id_2;
     openServiceList();
     openClubList();
   }
+
+  // объект для всех необходимых данных при создании договора
 
   let allData =
       {
@@ -497,7 +518,7 @@ let id_2;
         letter: '',
       }
 
-  document.getElementById('create-contract-but').addEventListener('click', getDataForContracts);
+  document.getElementById('create-contract-but').addEventListener('click', getDataForContracts); // клац и получили данные да еще и создали документ
 
   function getDataForContracts() {
     let errors = 0;
@@ -598,6 +619,8 @@ let id_2;
     }
   }
 
+  // список услуг красивенький и список заведений, тоже красивенький
+
   function openServiceList() {
     connection.query(`SELECT COUNT (*) AS 'KOLVO' FROM Lovice.Services;`, (err, rez) => {
       let kolvo = rez[0]['KOLVO'];
@@ -635,6 +658,8 @@ let id_2;
     })
   }
 
+  // удаление любого каталога, вообще любого
+
   function deleteCatalog(id) {
     let arr = document.getElementById(id);
     while (arr.firstChild) {
@@ -648,6 +673,7 @@ let id_2;
     renderCatalog();
   })
 
+  // каталог для мониторинга всех пользователей
 
 function openCatalogForAdmins() {
   connection.query(`SELECT COUNT (*) AS 'Kolvo' FROM Lovice.Users WHERE Users.Log_in <> '${this_login}' AND Users.Level = 'admin';`, (err, rez) => {
@@ -712,6 +738,8 @@ function openCatalogForAdmins() {
   })
 }
 
+// манипуляции с бедными пользователями
+
 function makeAdmin(id) {
   connection.query(`UPDATE Lovice.Users SET Users.Level = 'admin' WHERE Users.Id = '${id}';`);
   deleteCatalog('admin-pages');
@@ -746,7 +774,7 @@ document.getElementById('to-profile-from-alls').addEventListener('click', () => 
 function servicesPageCreate() {
   connection.query(`SELECT COUNT(*) AS 'Kolvo' FROM Lovice.Services;`, (err, rez) => {
     if (err) {
-      console.log('damn');
+      console.log('no');
     } else {
         console.log(rez[0]['Kolvo']);
         let kolvo = rez[0]['Kolvo'];
@@ -779,7 +807,7 @@ function servicesPageCreate() {
   });
 }
 
-// 
+// очень хороший поиск с отрисовкой результатов
 
   document.getElementById('search-but-main').addEventListener('click', () => {
     if (this_login === '') {
@@ -885,6 +913,8 @@ function servicesPageCreate() {
     clearInputs();
   })
 
+  // удаление профиля по клацу
+
 document.getElementById('delete-profile-user').addEventListener('click', () => {
   document.getElementById('profile-page').classList.add('close');
   document.getElementById('delete-profile-page').classList.remove('close');
@@ -952,6 +982,8 @@ function clubsPageCreate() {
   })
 }
 
+// добавление новой услуги
+
 function editServices() {
   let error = 0;
   let serviceName = document.getElementById('service-name-input').value;
@@ -981,6 +1013,8 @@ function editServices() {
   }
   
 }
+
+// добавление нового клуба
 
 function editClubs() {
   let errors = 0;
@@ -1023,6 +1057,8 @@ document.getElementById('to-profile-from-chs').addEventListener('click', () => {
   document.getElementById('profile-page').classList.remove('close');
 })
 
+// очень важная функция создания сообщений об ошибках
+
 function showMessage(id, text) {
   let block = document.getElementById(id);
   block.classList.remove('close');
@@ -1031,6 +1067,8 @@ function showMessage(id, text) {
     block.classList.add('close');
   }, 3000);
 }
+
+// тут переключения страниц, т.к. электрон не позволяет делать многостраничные приложения, пришлось ставить класс close
 
 document.getElementById('to-profile-from-catalog').addEventListener('click', () => {
   document.getElementById('catalog-page').classList.add('close');
@@ -1062,10 +1100,6 @@ document.getElementById('view-clubs').addEventListener('click', () => {
   document.getElementById('change-clubs-page').classList.add('close');
 })
 
-// тут раздел переключения страниц, т.к. электрон не позволяет делать многостраничные приложения, пришлось ставить класс close
-
-// открытие страницы регистрации и закрытие
-
 document.getElementById('to-reg').addEventListener('click', () => {
   clearInputs();
   document.getElementById('reg-page').classList.remove('close');
@@ -1076,8 +1110,6 @@ document.getElementById('to-main-r').addEventListener('click', () => {
   document.getElementById('reg-page').classList.add('close');
   document.getElementById('navigate-list').classList.remove('close');
 })
-
-// открытие страницы услуг и закрытие
 
 document.getElementById('to-service').addEventListener('click', () => {
   document.getElementById('service-page').classList.remove('close');
@@ -1091,8 +1123,6 @@ document.getElementById('to-main-s').addEventListener('click', () => {
   document.getElementById('profile-page').classList.remove('close');
 })
 
-// открытие страницы входа и закрытие
-
 document.getElementById('to-sign-in').addEventListener('click', () => {
   clearInputs();
   document.getElementById('sign-in-page').classList.remove('close');
@@ -1103,8 +1133,6 @@ document.getElementById('to-main-e').addEventListener('click', () => {
   document.getElementById('sign-in-page').classList.add('close');
   document.getElementById('navigate-list').classList.remove('close');
 })
-
-// открытие страницы клубов и закрытие
 
 document.getElementById('to-clubs').addEventListener('click', () => {
   document.getElementById('clubs-page').classList.remove('close');
